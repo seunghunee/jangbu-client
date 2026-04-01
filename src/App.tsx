@@ -1,26 +1,5 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
-import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Container,
-  Grid,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Card, CardContent, Container, Stack, Typography } from "@mui/material";
 import { fetchProducerSales, type ProducerSalesResponse } from "./api";
 import {
   formatDateTimeLabel,
@@ -31,6 +10,10 @@ import {
   sortProductsByGrossSales,
   toOffsetDateTime,
 } from "./format";
+import { DateFilterCard } from "./components/DateFilterCard";
+import { LoginCard } from "./components/LoginCard";
+import { ProductSalesList } from "./components/ProductSalesList";
+import { ReportStats } from "./components/ReportStats";
 
 type FormState = {
   selectedDate: string;
@@ -219,9 +202,7 @@ export function App() {
   }
 
   const totals = report ? getSalesTotals(report) : null;
-  const sortedProducts = report
-    ? sortProductsByGrossSales(report.products)
-    : [];
+  const sortedProducts = report ? sortProductsByGrossSales(report.products) : [];
 
   return (
     <Box
@@ -235,85 +216,16 @@ export function App() {
     >
       <Container maxWidth="md" disableGutters>
         {!identity ? (
-          <Card
-            sx={{
-              maxWidth: 460,
-              mx: "auto",
-              mt: { xs: 3, sm: 6 },
-              borderRadius: 4,
-              boxShadow: 6,
+          <LoginCard
+            identityDraft={identityDraft}
+            onStoreIdChange={(value) => {
+              setIdentityDraft((current) => ({ ...current, storeId: value }));
             }}
-          >
-            <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-              <Stack spacing={2.5}>
-                <Box
-                  sx={{
-                    width: 76,
-                    height: 76,
-                    mx: "auto",
-                    borderRadius: 3,
-                    display: "grid",
-                    placeItems: "center",
-                    background:
-                      "linear-gradient(140deg, rgba(22,163,74,0.18), rgba(16,185,129,0.25))",
-                    color: "primary.main",
-                  }}
-                >
-                  <MenuBookRoundedIcon fontSize="large" />
-                </Box>
-
-                <Box textAlign="center">
-                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    Jangbu Producer Portal
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    Sign in once to use your sales dashboard.
-                  </Typography>
-                </Box>
-
-                <Box component="form" onSubmit={handleIdentitySubmit}>
-                  <Stack spacing={1.5}>
-                    <TextField
-                      required
-                      label="Store code"
-                      placeholder="Enter your store code"
-                      value={identityDraft.storeId}
-                      onChange={(event) => {
-                        setIdentityDraft((current) => ({
-                          ...current,
-                          storeId: event.target.value,
-                        }));
-                      }}
-                    />
-                    <TextField
-                      required
-                      label="Account ID"
-                      placeholder="Enter your account ID"
-                      value={identityDraft.producerId}
-                      onChange={(event) => {
-                        setIdentityDraft((current) => ({
-                          ...current,
-                          producerId: event.target.value,
-                        }));
-                      }}
-                    />
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                    >
-                      Log in
-                    </Button>
-                  </Stack>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
+            onProducerIdChange={(value) => {
+              setIdentityDraft((current) => ({ ...current, producerId: value }));
+            }}
+            onSubmit={handleIdentitySubmit}
+          />
         ) : (
           <Stack spacing={1.5}>
             <Card>
@@ -334,293 +246,51 @@ export function App() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardContent>
-                <Stack spacing={1.5}>
-                  <Typography
-                    variant="overline"
-                    color="text.secondary"
-                    sx={{ fontWeight: 700 }}
-                  >
-                    Query period
-                  </Typography>
+            <DateFilterCard
+              selectedDateLabel={toDateDisplayLabel(form.selectedDate)}
+              rangeDays={form.rangeDays}
+              isLoading={isLoading}
+              rangeOptions={RANGE_OPTIONS}
+              onShiftDate={shiftSelectedDate}
+              onOpenDatePicker={openDatePicker}
+              onSelectRange={applyQuickRange}
+              onSubmit={handleSubmit}
+            />
 
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Button
-                      variant="outlined"
-                      onClick={() => shiftSelectedDate(-1)}
-                      sx={{ minWidth: 42, px: 0 }}
-                      aria-label="Previous day"
-                    >
-                      <ChevronLeftRoundedIcon />
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      fullWidth
-                      onClick={openDatePicker}
-                      sx={{ justifyContent: "center" }}
-                    >
-                      {toDateDisplayLabel(form.selectedDate)}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => shiftSelectedDate(1)}
-                      sx={{ minWidth: 42, px: 0 }}
-                      aria-label="Next day"
-                    >
-                      <ChevronRightRoundedIcon />
-                    </Button>
-                  </Stack>
-
-                  <input
-                    ref={dateInputRef}
-                    type="date"
-                    value={form.selectedDate}
-                    style={{
-                      position: "absolute",
-                      opacity: 0,
-                      pointerEvents: "none",
-                    }}
-                    onChange={(event) => {
-                      setForm((current) => ({
-                        ...current,
-                        selectedDate: event.target.value,
-                      }));
-                    }}
-                  />
-
-                  <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                    {RANGE_OPTIONS.map((option) => (
-                      <Button
-                        key={option.days}
-                        variant={
-                          form.rangeDays === option.days
-                            ? "contained"
-                            : "outlined"
-                        }
-                        color={
-                          form.rangeDays === option.days
-                            ? "secondary"
-                            : "inherit"
-                        }
-                        onClick={() => applyQuickRange(option.days)}
-                      >
-                        {option.label}
-                      </Button>
-                    ))}
-                    <Button variant="outlined" onClick={openDatePicker}>
-                      Pick date
-                    </Button>
-                  </Stack>
-
-                  <Box component="form" onSubmit={handleSubmit}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="secondary"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Loading report..." : "Load sales"}
-                    </Button>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
+            <input
+              ref={dateInputRef}
+              type="date"
+              value={form.selectedDate}
+              style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
+              onChange={(event) => {
+                setForm((current) => ({
+                  ...current,
+                  selectedDate: event.target.value,
+                }));
+              }}
+            />
           </Stack>
         )}
 
-        {errorMessage ? (
-          <Alert severity="error" sx={{ mt: 1.5 }}>
-            {errorMessage}
-          </Alert>
-        ) : null}
+        {errorMessage ? <Alert severity="error" sx={{ mt: 1.5 }}>{errorMessage}</Alert> : null}
 
         {report && totals ? (
           <Stack spacing={1.5} sx={{ mt: 1.5 }}>
-            <Grid container spacing={1.25}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="overline" color="text.secondary">
-                      Gross sales
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                      {formatKrw(totals.grossSalesKrw)}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="overline" color="text.secondary">
-                      Fund total
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                      {formatKrw(totals.fundTotalKrw)}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="overline" color="text.secondary">
-                      Payout amount
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                      {formatKrw(totals.payoutAmountKrw)}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="overline" color="text.secondary">
-                      Units sold
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                      {formatInteger(totals.soldQty)}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
+            <ReportStats
+              totals={totals}
+              reportFrom={report.from}
+              reportTo={report.to}
+              productCount={report.products.length}
+              formatKrw={formatKrw}
+              formatInteger={formatInteger}
+              formatDateTimeLabel={formatDateTimeLabel}
+            />
 
-            <Card>
-              <CardContent>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                  <Box flex={1}>
-                    <Typography variant="overline" color="text.secondary">
-                      Report period
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      {formatDateTimeLabel(report.from)} -{" "}
-                      {formatDateTimeLabel(report.to)}
-                    </Typography>
-                  </Box>
-                  <Box flex={1}>
-                    <Typography variant="overline" color="text.secondary">
-                      Products
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      {formatInteger(report.products.length)} items
-                    </Typography>
-                  </Box>
-                  <Box flex={1}>
-                    <Typography variant="overline" color="text.secondary">
-                      Session
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      Temporary login active
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-
-            <Typography
-              variant="subtitle1"
-              color="text.secondary"
-              sx={{ px: 0.5 }}
-            >
-              Sales items ({formatInteger(sortedProducts.length)})
-            </Typography>
-
-            {sortedProducts.map((product) => (
-              <Card key={product.productId}>
-                <CardContent>
-                  <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    justifyContent="space-between"
-                    alignItems={{ xs: "flex-start", sm: "flex-start" }}
-                    spacing={1}
-                    sx={{ mb: 1.5 }}
-                  >
-                    <Box>
-                      <Typography variant="overline" color="text.secondary">
-                        Product
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{ mt: 0.25, fontWeight: 700 }}
-                      >
-                        {product.productName}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {formatInteger(product.soldQty)} sold
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        {formatKrw(product.grossSalesKrw)}
-                      </Typography>
-                    </Box>
-                  </Stack>
-
-                  <Grid container spacing={1} sx={{ mb: 1.5 }}>
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                      <Chip
-                        label={`Fund total ${formatKrw(product.fundTotalKrw)}`}
-                        variant="outlined"
-                        sx={{ width: "100%", justifyContent: "flex-start" }}
-                      />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                      <Chip
-                        label={`Payout ${formatKrw(product.payoutAmountKrw)}`}
-                        variant="outlined"
-                        sx={{ width: "100%", justifyContent: "flex-start" }}
-                      />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                      <Chip
-                        label={`Variants ${formatInteger(product.items.length)}`}
-                        variant="outlined"
-                        sx={{ width: "100%", justifyContent: "flex-start" }}
-                      />
-                    </Grid>
-                  </Grid>
-
-                  <TableContainer
-                    sx={{
-                      borderRadius: 2,
-                      border: (theme) => `1px solid ${theme.palette.divider}`,
-                    }}
-                  >
-                    <Table size="small" sx={{ minWidth: 560 }}>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Variant</TableCell>
-                          <TableCell>Sold</TableCell>
-                          <TableCell>Gross sales</TableCell>
-                          <TableCell>Fund total</TableCell>
-                          <TableCell>Payout</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {product.items.map((item) => (
-                          <TableRow key={item.productVariantId}>
-                            <TableCell>{item.productVariantName}</TableCell>
-                            <TableCell>{formatInteger(item.soldQty)}</TableCell>
-                            <TableCell>
-                              {formatKrw(item.grossSalesKrw)}
-                            </TableCell>
-                            <TableCell>
-                              {formatKrw(item.fundTotalKrw)}
-                            </TableCell>
-                            <TableCell>
-                              {formatKrw(item.payoutAmountKrw)}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            ))}
+            <ProductSalesList
+              products={sortedProducts}
+              formatInteger={formatInteger}
+              formatKrw={formatKrw}
+            />
           </Stack>
         ) : (
           <Card sx={{ mt: 1.5 }}>

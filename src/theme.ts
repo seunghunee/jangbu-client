@@ -37,6 +37,13 @@ let theme = createTheme({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          minWidth: 320,
+        },
+      },
+    },
     MuiButton: {
       defaultProps: {
         disableElevation: true,
@@ -45,6 +52,10 @@ let theme = createTheme({
         root: {
           borderRadius: 999,
           paddingInline: 14,
+          fontWeight: 700,
+        },
+        outlined: {
+          borderColor: "rgba(15, 23, 42, 0.16)",
         },
       },
     },
@@ -52,6 +63,54 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 20,
+          border: "1px solid rgba(15, 23, 42, 0.08)",
+          backgroundImage: "none",
+        },
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: {
+        root: {
+          ":last-child": {
+            paddingBottom: 16,
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: "outlined",
+        size: "small",
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          backgroundColor: "#ffffff",
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: 10,
+          justifyContent: "flex-start",
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          fontWeight: 700,
+          color: "#64748b",
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
         },
       },
     },
