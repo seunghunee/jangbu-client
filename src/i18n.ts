@@ -1,18 +1,37 @@
 export type UILanguage = "en" | "ko";
 
-// Change this value to switch app language globally.
-export const UI_LANGUAGE: UILanguage = "en";
+const LANGUAGE_STORAGE_KEY = "jangbu.uiLanguage";
+const DEFAULT_UI_LANGUAGE: UILanguage = "en";
 
 const LOCALE_BY_LANGUAGE: Record<UILanguage, string> = {
   en: "en-US",
   ko: "ko-KR",
 };
 
-export const UI_LOCALE = LOCALE_BY_LANGUAGE[UI_LANGUAGE];
+function isUILanguage(value: string): value is UILanguage {
+  return value === "en" || value === "ko";
+}
+
+function loadStoredLanguage(): UILanguage {
+  if (typeof window === "undefined") {
+    return DEFAULT_UI_LANGUAGE;
+  }
+
+  const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  if (stored && isUILanguage(stored)) {
+    return stored;
+  }
+  return DEFAULT_UI_LANGUAGE;
+}
+
+let currentLanguage: UILanguage = loadStoredLanguage();
 
 type MessageKey =
   | "app.salesReport"
   | "app.switchAccount"
+  | "app.language"
+  | "app.langEnglish"
+  | "app.langKorean"
   | "login.title"
   | "login.subtitle"
   | "login.storeCode"
@@ -54,6 +73,9 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
   en: {
     "app.salesReport": "Sales report",
     "app.switchAccount": "Switch account",
+    "app.language": "Language",
+    "app.langEnglish": "English",
+    "app.langKorean": "Korean",
     "login.title": "Jangbu Producer Portal",
     "login.subtitle": "Sign in once to use your sales dashboard.",
     "login.storeCode": "Store code",
@@ -94,6 +116,9 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
   ko: {
     "app.salesReport": "매출 내역 조회",
     "app.switchAccount": "계정 변경",
+    "app.language": "언어",
+    "app.langEnglish": "영어",
+    "app.langKorean": "한국어",
     "login.title": "장부 생산자 포털",
     "login.subtitle": "매출 대시보드를 사용하려면 로그인하세요.",
     "login.storeCode": "매장 코드",
@@ -134,5 +159,20 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
 };
 
 export function t(key: MessageKey): string {
-  return messages[UI_LANGUAGE][key];
+  return messages[currentLanguage][key];
+}
+
+export function getUILanguage(): UILanguage {
+  return currentLanguage;
+}
+
+export function setUILanguage(language: UILanguage) {
+  currentLanguage = language;
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  }
+}
+
+export function getUILocale(): string {
+  return LOCALE_BY_LANGUAGE[currentLanguage];
 }

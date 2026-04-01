@@ -1,5 +1,5 @@
 export {
-  RANGE_OPTIONS,
+  getRangeOptions,
   toDateDisplayLabel,
   useSalesReport,
 } from "./useSalesReport";

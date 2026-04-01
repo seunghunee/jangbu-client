@@ -5,6 +5,8 @@ import {
   Card,
   CardContent,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { formatDateTimeLabel, formatInteger, formatKrw } from "./format";
@@ -15,10 +17,13 @@ import {
   ProductSalesList,
   ReportStats,
 } from "./components";
-import { RANGE_OPTIONS, useSalesReport } from "./hooks";
-import { t } from "./i18n";
+import { getRangeOptions, useSalesReport } from "./hooks";
+import { getUILanguage, setUILanguage, t, type UILanguage } from "./i18n";
+import { useState } from "react";
 
 export function App() {
+  const [language, setLanguage] = useState<UILanguage>(getUILanguage());
+
   const {
     form,
     identity,
@@ -38,9 +43,22 @@ export function App() {
     handleSubmit,
   } = useSalesReport();
 
+  const rangeOptions = getRangeOptions();
+
   useEffect(() => {
     document.title = "Jangbu Client";
   }, []);
+
+  function handleLanguageChange(
+    _event: React.MouseEvent<HTMLElement>,
+    nextLanguage: UILanguage | null,
+  ) {
+    if (!nextLanguage || nextLanguage === language) {
+      return;
+    }
+    setUILanguage(nextLanguage);
+    setLanguage(nextLanguage);
+  }
 
   return (
     <AppLayout>
@@ -68,9 +86,25 @@ export function App() {
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {t("app.salesReport")}
                 </Typography>
-                <Button variant="outlined" onClick={handleIdentityReset}>
-                  {t("app.switchAccount")}
-                </Button>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <ToggleButtonGroup
+                    size="small"
+                    value={language}
+                    exclusive
+                    onChange={handleLanguageChange}
+                    aria-label={t("app.language")}
+                  >
+                    <ToggleButton value="en" aria-label={t("app.langEnglish")}>
+                      EN
+                    </ToggleButton>
+                    <ToggleButton value="ko" aria-label={t("app.langKorean")}>
+                      KO
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                  <Button variant="outlined" onClick={handleIdentityReset}>
+                    {t("app.switchAccount")}
+                  </Button>
+                </Stack>
               </Stack>
             </CardContent>
           </Card>
@@ -80,7 +114,7 @@ export function App() {
             selectedDateLabel={`${formatDateTimeLabel(activeRange.from)} - ${formatDateTimeLabel(activeRange.to)}`}
             rangeDays={form.rangeDays}
             isLoading={isLoading}
-            rangeOptions={RANGE_OPTIONS}
+            rangeOptions={rangeOptions}
             onShiftDate={shiftSelectedDate}
             onSelectedDateChange={setSelectedDate}
             onSelectRange={applyQuickRange}

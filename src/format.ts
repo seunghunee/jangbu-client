@@ -1,20 +1,37 @@
 import type { ProducerSalesProduct, ProducerSalesResponse } from "./api";
-import { UI_LOCALE } from "./i18n";
+import { getUILocale } from "./i18n";
 
-const currencyFormatter = new Intl.NumberFormat(UI_LOCALE, {
-  style: "currency",
-  currency: "KRW",
-  maximumFractionDigits: 0,
-});
+const currencyFormatterByLocale = new Map<string, Intl.NumberFormat>();
+const integerFormatterByLocale = new Map<string, Intl.NumberFormat>();
 
-const integerFormatter = new Intl.NumberFormat(UI_LOCALE);
+function getCurrencyFormatter(locale: string): Intl.NumberFormat {
+  let formatter = currencyFormatterByLocale.get(locale);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: "KRW",
+      maximumFractionDigits: 0,
+    });
+    currencyFormatterByLocale.set(locale, formatter);
+  }
+  return formatter;
+}
+
+function getIntegerFormatter(locale: string): Intl.NumberFormat {
+  let formatter = integerFormatterByLocale.get(locale);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale);
+    integerFormatterByLocale.set(locale, formatter);
+  }
+  return formatter;
+}
 
 export function formatKrw(value: number): string {
-  return currencyFormatter.format(value);
+  return getCurrencyFormatter(getUILocale()).format(value);
 }
 
 export function formatInteger(value: number): string {
-  return integerFormatter.format(value);
+  return getIntegerFormatter(getUILocale()).format(value);
 }
 
 export function formatDateTimeRangeValue(date: Date): string {
@@ -27,7 +44,7 @@ export function formatDateTimeRangeValue(date: Date): string {
 }
 
 export function formatDateTimeLabel(value: string): string {
-  return new Intl.DateTimeFormat(UI_LOCALE, {
+  return new Intl.DateTimeFormat(getUILocale(), {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));

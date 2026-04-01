@@ -6,7 +6,7 @@ import {
   sortProductsByGrossSales,
   toOffsetDateTime,
 } from "../format";
-import { t, UI_LOCALE } from "../i18n";
+import { getUILocale, t } from "../i18n";
 
 type FormState = {
   selectedDate: string;
@@ -21,11 +21,13 @@ type IdentityState = {
 const initialDateRange = getDefaultDateRange(new Date());
 const IDENTITY_STORAGE_KEY = "jangbu.identity";
 
-export const RANGE_OPTIONS = [
-  { label: t("range.today"), days: 1 },
-  { label: t("range.oneWeek"), days: 7 },
-  { label: t("range.oneMonth"), days: 30 },
-] as const;
+export function getRangeOptions() {
+  return [
+    { label: t("range.today"), days: 1 },
+    { label: t("range.oneWeek"), days: 7 },
+    { label: t("range.oneMonth"), days: 30 },
+  ] as const;
+}
 
 const initialFormState: FormState = {
   selectedDate: initialDateRange.to.slice(0, 10),
@@ -81,7 +83,7 @@ function getRequestDateRange(form: FormState): { from: string; to: string } {
 
 export function toDateDisplayLabel(dateValue: string): string {
   const date = new Date(`${dateValue}T00:00:00`);
-  return new Intl.DateTimeFormat(UI_LOCALE, {
+  return new Intl.DateTimeFormat(getUILocale(), {
     year: "numeric",
     month: "long",
     day: "numeric",
