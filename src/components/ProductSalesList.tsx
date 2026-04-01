@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { ProducerSalesProduct } from "../api";
+import { t } from "../i18n";
 
 type ProductSalesListProps = {
   products: ProducerSalesProduct[];
@@ -29,7 +30,7 @@ export function ProductSalesList({
   return (
     <>
       <Typography variant="subtitle1" color="text.secondary" sx={{ px: 0.5 }}>
-        Sales items ({formatInteger(products.length)})
+        {t("product.itemsHeading")} ({formatInteger(products.length)})
       </Typography>
 
       {products.map((product) => (
@@ -44,7 +45,7 @@ export function ProductSalesList({
             >
               <Box>
                 <Typography variant="overline" color="text.secondary">
-                  Product
+                  {t("product.product")}
                 </Typography>
                 <Typography variant="h6" sx={{ mt: 0.25, fontWeight: 700 }}>
                   {product.productName}
@@ -52,7 +53,7 @@ export function ProductSalesList({
               </Box>
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  {formatInteger(product.soldQty)} sold
+                  {formatInteger(product.soldQty)} {t("product.sold")}
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
                   {formatKrw(product.grossSalesKrw)}
@@ -63,21 +64,21 @@ export function ProductSalesList({
             <Grid container spacing={1} sx={{ mb: 1.5 }}>
               <Grid size={{ xs: 12, sm: 4 }}>
                 <Chip
-                  label={`Fund total ${formatKrw(product.fundTotalKrw)}`}
+                  label={`${t("stats.fundTotal")} ${formatKrw(product.fundTotalKrw)}`}
                   variant="outlined"
                   sx={{ width: "100%", justifyContent: "flex-start" }}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 4 }}>
                 <Chip
-                  label={`Payout ${formatKrw(product.payoutAmountKrw)}`}
+                  label={`${t("table.payout")} ${formatKrw(product.payoutAmountKrw)}`}
                   variant="outlined"
                   sx={{ width: "100%", justifyContent: "flex-start" }}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 4 }}>
                 <Chip
-                  label={`Variants ${formatInteger(product.items.length)}`}
+                  label={`${t("product.variants")} ${formatInteger(product.items.length)}`}
                   variant="outlined"
                   sx={{ width: "100%", justifyContent: "flex-start" }}
                 />
@@ -93,11 +94,11 @@ export function ProductSalesList({
               <Table size="small" sx={{ minWidth: 560 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Variant</TableCell>
-                    <TableCell>Sold</TableCell>
-                    <TableCell>Gross sales</TableCell>
-                    <TableCell>Fund total</TableCell>
-                    <TableCell>Payout</TableCell>
+                    <TableCell>{t("table.variant")}</TableCell>
+                    <TableCell>{t("table.sold")}</TableCell>
+                    <TableCell>{t("table.grossSales")}</TableCell>
+                    <TableCell>{t("table.fundTotal")}</TableCell>
+                    <TableCell>{t("table.payout")}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

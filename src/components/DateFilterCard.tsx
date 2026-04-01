@@ -9,6 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { t } from "../i18n";
 
 type DateFilterCardProps = {
   selectedDate: string;
@@ -56,7 +57,7 @@ export function DateFilterCard({
             color="text.secondary"
             sx={{ fontWeight: 700 }}
           >
-            Query period
+            {t("date.queryPeriod")}
           </Typography>
 
           <Stack direction="row" spacing={1} alignItems="center">
@@ -64,7 +65,7 @@ export function DateFilterCard({
               variant="outlined"
               onClick={() => onShiftDate(-1)}
               sx={{ minWidth: 42, px: 0 }}
-              aria-label="Previous day"
+              aria-label={t("date.prevDay")}
             >
               <ChevronLeftRoundedIcon />
             </Button>
@@ -80,7 +81,7 @@ export function DateFilterCard({
               variant="outlined"
               onClick={() => onShiftDate(1)}
               sx={{ minWidth: 42, px: 0 }}
-              aria-label="Next day"
+              aria-label={t("date.nextDay")}
             >
               <ChevronRightRoundedIcon />
             </Button>
@@ -98,7 +99,7 @@ export function DateFilterCard({
               </Button>
             ))}
             <Button variant="outlined" onClick={openDatePicker}>
-              Pick date
+              {t("date.pickDate")}
             </Button>
           </Stack>
 
@@ -119,7 +120,7 @@ export function DateFilterCard({
               color="secondary"
               disabled={isLoading}
             >
-              {isLoading ? "Loading report..." : "Load sales"}
+              {isLoading ? t("date.loadingReport") : t("date.loadSales")}
             </Button>
           </Box>
         </Stack>

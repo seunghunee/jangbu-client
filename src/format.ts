@@ -1,12 +1,13 @@
 import type { ProducerSalesProduct, ProducerSalesResponse } from "./api";
+import { UI_LOCALE } from "./i18n";
 
-const currencyFormatter = new Intl.NumberFormat("ko-KR", {
+const currencyFormatter = new Intl.NumberFormat(UI_LOCALE, {
   style: "currency",
   currency: "KRW",
   maximumFractionDigits: 0,
 });
 
-const integerFormatter = new Intl.NumberFormat("ko-KR");
+const integerFormatter = new Intl.NumberFormat(UI_LOCALE);
 
 export function formatKrw(value: number): string {
   return currencyFormatter.format(value);
@@ -26,7 +27,7 @@ export function formatDateTimeRangeValue(date: Date): string {
 }
 
 export function formatDateTimeLabel(value: string): string {
-  return new Intl.DateTimeFormat("ko-KR", {
+  return new Intl.DateTimeFormat(UI_LOCALE, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
@@ -47,7 +48,10 @@ export function toOffsetDateTime(localDateTime: string): string {
 
   const offsetMinutes = -date.getTimezoneOffset();
   const sign = offsetMinutes >= 0 ? "+" : "-";
-  const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, "0");
+  const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(
+    2,
+    "0",
+  );
   const offsetRemainder = String(Math.abs(offsetMinutes) % 60).padStart(2, "0");
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${sign}${offsetHours}:${offsetRemainder}`;
@@ -80,6 +84,10 @@ export function getSalesTotals(report: ProducerSalesResponse) {
   );
 }
 
-export function sortProductsByGrossSales(products: ProducerSalesProduct[]): ProducerSalesProduct[] {
-  return [...products].sort((left, right) => right.grossSalesKrw - left.grossSalesKrw);
+export function sortProductsByGrossSales(
+  products: ProducerSalesProduct[],
+): ProducerSalesProduct[] {
+  return [...products].sort(
+    (left, right) => right.grossSalesKrw - left.grossSalesKrw,
+  );
 }

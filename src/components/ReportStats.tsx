@@ -1,4 +1,5 @@
 import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
+import { t } from "../i18n";
 
 type Totals = {
   grossSalesKrw: number;
@@ -33,7 +34,7 @@ export function ReportStats({
           <Card>
             <CardContent>
               <Typography variant="overline" color="text.secondary">
-                Gross sales
+                {t("stats.grossSales")}
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
                 {formatKrw(totals.grossSalesKrw)}
@@ -45,7 +46,7 @@ export function ReportStats({
           <Card>
             <CardContent>
               <Typography variant="overline" color="text.secondary">
-                Fund total
+                {t("stats.fundTotal")}
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
                 {formatKrw(totals.fundTotalKrw)}
@@ -57,7 +58,7 @@ export function ReportStats({
           <Card>
             <CardContent>
               <Typography variant="overline" color="text.secondary">
-                Payout amount
+                {t("stats.payoutAmount")}
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
                 {formatKrw(totals.payoutAmountKrw)}
@@ -69,7 +70,7 @@ export function ReportStats({
           <Card>
             <CardContent>
               <Typography variant="overline" color="text.secondary">
-                Units sold
+                {t("stats.unitsSold")}
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
                 {formatInteger(totals.soldQty)}
@@ -84,7 +85,7 @@ export function ReportStats({
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
             <Box flex={1}>
               <Typography variant="overline" color="text.secondary">
-                Report period
+                {t("report.period")}
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 700 }}>
                 {formatDateTimeLabel(reportFrom)} -{" "}
@@ -93,18 +94,18 @@ export function ReportStats({
             </Box>
             <Box flex={1}>
               <Typography variant="overline" color="text.secondary">
-                Products
+                {t("report.products")}
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                {formatInteger(productCount)} items
+                {formatInteger(productCount)} {t("report.items")}
               </Typography>
             </Box>
             <Box flex={1}>
               <Typography variant="overline" color="text.secondary">
-                Session
+                {t("report.session")}
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                Temporary login active
+                {t("report.sessionTemporaryLogin")}
               </Typography>
             </Box>
           </Stack>

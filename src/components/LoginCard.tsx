@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { t } from "../i18n";
 
 type IdentityDraft = {
   storeId: string;
@@ -57,10 +58,10 @@ export function LoginCard({
 
           <Box textAlign="center">
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              Jangbu Producer Portal
+              {t("login.title")}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Sign in once to use your sales dashboard.
+              {t("login.subtitle")}
             </Typography>
           </Box>
 
@@ -68,15 +69,15 @@ export function LoginCard({
             <Stack spacing={1.5}>
               <TextField
                 required
-                label="Store code"
-                placeholder="Enter your store code"
+                label={t("login.storeCode")}
+                placeholder={t("login.storeCodePlaceholder")}
                 value={identityDraft.storeId}
                 onChange={(event) => onStoreIdChange(event.target.value)}
               />
               <TextField
                 required
-                label="Account ID"
-                placeholder="Enter your account ID"
+                label={t("login.accountId")}
+                placeholder={t("login.accountIdPlaceholder")}
                 value={identityDraft.producerId}
                 onChange={(event) => onProducerIdChange(event.target.value)}
               />
@@ -86,7 +87,7 @@ export function LoginCard({
                 color="primary"
                 fullWidth
               >
-                Log in
+                {t("login.submit")}
               </Button>
             </Stack>
           </Box>

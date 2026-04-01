@@ -15,7 +15,8 @@ import {
   ProductSalesList,
   ReportStats,
 } from "./components";
-import { RANGE_OPTIONS, toDateDisplayLabel, useSalesReport } from "./hooks";
+import { RANGE_OPTIONS, useSalesReport } from "./hooks";
+import { t } from "./i18n";
 
 export function App() {
   const {
@@ -65,10 +66,10 @@ export function App() {
                 spacing={1.25}
               >
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                  Sales report
+                  {t("app.salesReport")}
                 </Typography>
                 <Button variant="outlined" onClick={handleIdentityReset}>
-                  Switch account
+                  {t("app.switchAccount")}
                 </Button>
               </Stack>
             </CardContent>
@@ -76,7 +77,7 @@ export function App() {
 
           <DateFilterCard
             selectedDate={form.selectedDate}
-            selectedDateLabel={toDateDisplayLabel(form.selectedDate)}
+            selectedDateLabel={`${formatDateTimeLabel(activeRange.from)} - ${formatDateTimeLabel(activeRange.to)}`}
             rangeDays={form.rangeDays}
             isLoading={isLoading}
             rangeOptions={RANGE_OPTIONS}
@@ -112,17 +113,7 @@ export function App() {
             formatKrw={formatKrw}
           />
         </Stack>
-      ) : (
-        <Card sx={{ mt: 1.5 }}>
-          <CardContent>
-            <Typography align="center" color="text.secondary">
-              {identity
-                ? `Selected period: ${formatDateTimeLabel(activeRange.from)} - ${formatDateTimeLabel(activeRange.to)}`
-                : "Log in with Store ID and Producer ID to begin."}
-            </Typography>
-          </CardContent>
-        </Card>
-      )}
+      ) : null}
     </AppLayout>
   );
 }

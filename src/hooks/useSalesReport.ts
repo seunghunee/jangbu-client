@@ -6,6 +6,7 @@ import {
   sortProductsByGrossSales,
   toOffsetDateTime,
 } from "../format";
+import { t, UI_LOCALE } from "../i18n";
 
 type FormState = {
   selectedDate: string;
@@ -21,9 +22,9 @@ const initialDateRange = getDefaultDateRange(new Date());
 const IDENTITY_STORAGE_KEY = "jangbu.identity";
 
 export const RANGE_OPTIONS = [
-  { label: "Today", days: 1 },
-  { label: "1 week", days: 7 },
-  { label: "1 month", days: 30 },
+  { label: t("range.today"), days: 1 },
+  { label: t("range.oneWeek"), days: 7 },
+  { label: t("range.oneMonth"), days: 30 },
 ] as const;
 
 const initialFormState: FormState = {
@@ -80,7 +81,7 @@ function getRequestDateRange(form: FormState): { from: string; to: string } {
 
 export function toDateDisplayLabel(dateValue: string): string {
   const date = new Date(`${dateValue}T00:00:00`);
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(UI_LOCALE, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -121,7 +122,7 @@ export function useSalesReport() {
     };
 
     if (!nextIdentity.storeId || !nextIdentity.producerId) {
-      setErrorMessage("Store ID and Producer ID are required.");
+      setErrorMessage(t("error.identityRequired"));
       return;
     }
 
@@ -162,7 +163,7 @@ export function useSalesReport() {
     event.preventDefault();
 
     if (!identity) {
-      setErrorMessage("Please log in first.");
+      setErrorMessage(t("error.loginRequired"));
       return;
     }
 
