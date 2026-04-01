@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { API_URL_PREFIX, fetchProducerSales, type ProducerSalesResponse } from "./api";
+import { fetchProducerSales, type ProducerSalesResponse } from "./api";
 import {
   formatDateTimeLabel,
   formatInteger,
@@ -58,30 +58,13 @@ export function App() {
   }
 
   const totals = report ? getSalesTotals(report) : null;
-  const sortedProducts = report ? sortProductsByGrossSales(report.products) : [];
+  const sortedProducts = report
+    ? sortProductsByGrossSales(report.products)
+    : [];
 
   return (
     <div className="app-shell">
       <main className="page">
-        <section className="hero">
-          <div className="hero-copy">
-            <p className="eyebrow">Read-only MVP</p>
-            <h1>Producer sales, without the legacy client baggage.</h1>
-            <p className="hero-text">
-              Point the client at a store, producer, and date range. It reads the typed
-              Jangbu server API and renders a settlement-oriented sales breakdown.
-            </p>
-          </div>
-          <div className="hero-card">
-            <div className="metric-label">API base URL</div>
-            <div className="metric-value">{API_URL_PREFIX}</div>
-            <p className="hero-card-note">
-              Configure `VITE_API_BASE_URL` if your server is not running on
-              `http://localhost:8080`.
-            </p>
-          </div>
-        </section>
-
         <section className="panel">
           <form className="query-form" onSubmit={handleSubmit}>
             <label>
@@ -92,7 +75,10 @@ export function App() {
                 placeholder="11111111-1111-4111-8111-111111111111"
                 value={form.storeId}
                 onChange={(event) => {
-                  setForm((current) => ({ ...current, storeId: event.target.value }));
+                  setForm((current) => ({
+                    ...current,
+                    storeId: event.target.value,
+                  }));
                 }}
               />
             </label>
@@ -105,7 +91,10 @@ export function App() {
                 placeholder="22222222-2222-4222-8222-222222222222"
                 value={form.producerId}
                 onChange={(event) => {
-                  setForm((current) => ({ ...current, producerId: event.target.value }));
+                  setForm((current) => ({
+                    ...current,
+                    producerId: event.target.value,
+                  }));
                 }}
               />
             </label>
@@ -117,7 +106,10 @@ export function App() {
                 type="datetime-local"
                 value={form.from}
                 onChange={(event) => {
-                  setForm((current) => ({ ...current, from: event.target.value }));
+                  setForm((current) => ({
+                    ...current,
+                    from: event.target.value,
+                  }));
                 }}
               />
             </label>
@@ -129,7 +121,10 @@ export function App() {
                 type="datetime-local"
                 value={form.to}
                 onChange={(event) => {
-                  setForm((current) => ({ ...current, to: event.target.value }));
+                  setForm((current) => ({
+                    ...current,
+                    to: event.target.value,
+                  }));
                 }}
               />
             </label>
@@ -181,7 +176,8 @@ export function App() {
               <div>
                 <span className="meta-label">Range</span>
                 <strong>
-                  {formatDateTimeLabel(report.from)} - {formatDateTimeLabel(report.to)}
+                  {formatDateTimeLabel(report.from)} -{" "}
+                  {formatDateTimeLabel(report.to)}
                 </strong>
               </div>
             </section>

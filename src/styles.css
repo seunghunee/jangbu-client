@@ -46,16 +46,6 @@ button {
   margin: 0 auto;
 }
 
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-  gap: 24px;
-  align-items: stretch;
-  margin-bottom: 24px;
-}
-
-.hero-copy,
-.hero-card,
 .panel,
 .stat-card {
   border: 1px solid rgba(31, 41, 55, 0.1);
@@ -63,25 +53,6 @@ button {
   backdrop-filter: blur(14px);
   box-shadow: 0 24px 60px rgba(65, 52, 17, 0.08);
   border-radius: 24px;
-}
-
-.hero-copy {
-  padding: 32px;
-}
-
-.hero h1 {
-  margin: 0 0 12px;
-  font-size: clamp(2.1rem, 4vw, 4.4rem);
-  line-height: 0.96;
-  letter-spacing: -0.06em;
-  max-width: 10ch;
-}
-
-.hero-text {
-  margin: 0;
-  max-width: 60ch;
-  font-size: 1.05rem;
-  color: #4b5563;
 }
 
 .eyebrow {
@@ -93,17 +64,6 @@ button {
   font-weight: 700;
 }
 
-.hero-card {
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background:
-    linear-gradient(135deg, rgba(188, 220, 255, 0.65), rgba(255, 255, 255, 0.9)),
-    rgba(255, 252, 247, 0.82);
-}
-
-.metric-label,
 .meta-label,
 .stat-label {
   display: block;
@@ -114,17 +74,6 @@ button {
   color: #6b7280;
 }
 
-.metric-value {
-  font-weight: 700;
-  font-size: 1.2rem;
-  word-break: break-word;
-}
-
-.hero-card-note {
-  margin: 16px 0 0;
-  color: #4b5563;
-}
-
 .panel {
   padding: 24px;
   margin-bottom: 24px;
@@ -132,7 +81,7 @@ button {
 
 .query-form {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
 }
 
@@ -140,6 +89,7 @@ button {
   display: grid;
   gap: 8px;
   font-weight: 600;
+  min-width: 0;
 }
 
 .query-form span {
@@ -148,6 +98,7 @@ button {
 
 .query-form input {
   width: 100%;
+  min-width: 0;
   border: 1px solid rgba(31, 41, 55, 0.12);
   background: rgba(255, 255, 255, 0.88);
   padding: 14px 16px;
@@ -302,7 +253,6 @@ th {
 }
 
 @media (max-width: 960px) {
-  .hero,
   .stats-grid,
   .report-meta,
   .product-metrics,
@@ -317,7 +267,6 @@ th {
     padding-top: 20px;
   }
 
-  .hero,
   .stats-grid,
   .report-meta,
   .product-metrics,
@@ -325,15 +274,11 @@ th {
     grid-template-columns: 1fr;
   }
 
-  .hero-copy,
-  .hero-card,
   .panel,
   .stat-card {
     border-radius: 20px;
   }
 
-  .hero-copy,
-  .hero-card,
   .panel {
     padding: 20px;
   }
