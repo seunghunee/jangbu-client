@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { API_BASE_URL, fetchProducerSales, type ProducerSalesResponse } from "./api";
+import { API_URL_PREFIX, fetchProducerSales, type ProducerSalesResponse } from "./api";
 import {
   formatDateTimeLabel,
   formatInteger,
@@ -74,7 +74,7 @@ export function App() {
           </div>
           <div className="hero-card">
             <div className="metric-label">API base URL</div>
-            <div className="metric-value">{API_BASE_URL}</div>
+            <div className="metric-value">{API_URL_PREFIX}</div>
             <p className="hero-card-note">
               Configure `VITE_API_BASE_URL` if your server is not running on
               `http://localhost:8080`.

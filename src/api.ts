@@ -36,17 +36,14 @@ type APIErrorPayload = {
   error?: string;
 };
 
-const defaultBaseUrl = "http://localhost:8080";
-
-export const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() || defaultBaseUrl;
+export const API_URL_PREFIX = "/api";
 
 export async function fetchProducerSales(
   request: ProducerSalesRequest,
 ): Promise<ProducerSalesResponse> {
   const url = new URL(
-    `/stores/${request.storeId}/producers/${request.producerId}/sales`,
-    API_BASE_URL,
+    `${API_URL_PREFIX}/stores/${request.storeId}/producers/${request.producerId}/sales`,
+    window.location.origin,
   );
   url.searchParams.set("from", request.from);
   url.searchParams.set("to", request.to);

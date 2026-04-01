@@ -27,5 +27,3 @@ Read-only MVP frontend for the producer sales API exposed by `jangbu-server`.
    ```bash
    npm run dev
    ```
-
-The client defaults to `http://localhost:8080` when `VITE_API_BASE_URL` is not set.
