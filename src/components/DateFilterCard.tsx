@@ -1,5 +1,6 @@
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import { useRef } from "react";
 import {
   Box,
   Button,
@@ -10,26 +11,42 @@ import {
 } from "@mui/material";
 
 type DateFilterCardProps = {
+  selectedDate: string;
   selectedDateLabel: string;
   rangeDays: number;
   isLoading: boolean;
   rangeOptions: ReadonlyArray<{ label: string; days: number }>;
   onShiftDate: (delta: number) => void;
-  onOpenDatePicker: () => void;
+  onSelectedDateChange: (value: string) => void;
   onSelectRange: (days: number) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
 export function DateFilterCard({
+  selectedDate,
   selectedDateLabel,
   rangeDays,
   isLoading,
   rangeOptions,
   onShiftDate,
-  onOpenDatePicker,
+  onSelectedDateChange,
   onSelectRange,
   onSubmit,
 }: DateFilterCardProps) {
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
+
+  function openDatePicker() {
+    const picker = dateInputRef.current;
+    if (!picker) {
+      return;
+    }
+    if (picker.showPicker) {
+      picker.showPicker();
+      return;
+    }
+    picker.click();
+  }
+
   return (
     <Card>
       <CardContent>
@@ -54,7 +71,7 @@ export function DateFilterCard({
             <Button
               variant="outlined"
               fullWidth
-              onClick={onOpenDatePicker}
+              onClick={openDatePicker}
               sx={{ justifyContent: "center" }}
             >
               {selectedDateLabel}
@@ -80,10 +97,20 @@ export function DateFilterCard({
                 {option.label}
               </Button>
             ))}
-            <Button variant="outlined" onClick={onOpenDatePicker}>
+            <Button variant="outlined" onClick={openDatePicker}>
               Pick date
             </Button>
           </Stack>
+
+          <input
+            ref={dateInputRef}
+            type="date"
+            value={selectedDate}
+            style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
+            onChange={(event) => {
+              onSelectedDateChange(event.target.value);
+            }}
+          />
 
           <Box component="form" onSubmit={onSubmit}>
             <Button

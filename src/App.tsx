@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   Alert,
   Button,
@@ -37,23 +37,9 @@ export function App() {
     handleSubmit,
   } = useSalesReport();
 
-  const dateInputRef = useRef<HTMLInputElement | null>(null);
-
   useEffect(() => {
     document.title = "Jangbu Client";
   }, []);
-
-  function openDatePicker() {
-    const picker = dateInputRef.current;
-    if (!picker) {
-      return;
-    }
-    if (picker.showPicker) {
-      picker.showPicker();
-      return;
-    }
-    picker.click();
-  }
 
   return (
     <AppLayout>
@@ -89,24 +75,15 @@ export function App() {
           </Card>
 
           <DateFilterCard
+            selectedDate={form.selectedDate}
             selectedDateLabel={toDateDisplayLabel(form.selectedDate)}
             rangeDays={form.rangeDays}
             isLoading={isLoading}
             rangeOptions={RANGE_OPTIONS}
             onShiftDate={shiftSelectedDate}
-            onOpenDatePicker={openDatePicker}
+            onSelectedDateChange={setSelectedDate}
             onSelectRange={applyQuickRange}
             onSubmit={handleSubmit}
-          />
-
-          <input
-            ref={dateInputRef}
-            type="date"
-            value={form.selectedDate}
-            style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
-            onChange={(event) => {
-              setSelectedDate(event.target.value);
-            }}
           />
         </Stack>
       )}
