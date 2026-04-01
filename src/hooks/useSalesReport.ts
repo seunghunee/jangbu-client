@@ -69,6 +69,13 @@ function shiftDateValue(dateValue: string, deltaDays: number): string {
   return toDateTimeLocalValue(date).slice(0, 10);
 }
 
+function getInclusiveDayDistance(fromDate: string, toDate: string): number {
+  const from = new Date(`${fromDate}T00:00:00`);
+  const to = new Date(`${toDate}T00:00:00`);
+  const diffMs = to.getTime() - from.getTime();
+  return Math.floor(diffMs / 86_400_000) + 1;
+}
+
 function getRequestDateRange(form: FormState): { from: string; to: string } {
   const end = new Date(`${form.selectedDate}T23:59:59`);
   const from = new Date(end);
@@ -114,6 +121,17 @@ export function useSalesReport() {
 
   function setSelectedDate(value: string) {
     setForm((current) => ({ ...current, selectedDate: value }));
+  }
+
+  function setSelectedRange(fromDate: string, toDate: string) {
+    const from = fromDate <= toDate ? fromDate : toDate;
+    const to = fromDate <= toDate ? toDate : fromDate;
+    const rangeDays = Math.max(1, getInclusiveDayDistance(from, to));
+    setForm((current) => ({
+      ...current,
+      selectedDate: to,
+      rangeDays,
+    }));
   }
 
   function handleIdentitySubmit(event: FormEvent<HTMLFormElement>) {
@@ -200,6 +218,7 @@ export function useSalesReport() {
     isLoading,
     setIdentityDraft,
     setSelectedDate,
+    setSelectedRange,
     handleIdentitySubmit,
     handleIdentityReset,
     applyQuickRange,

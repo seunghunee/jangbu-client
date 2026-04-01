@@ -46,7 +46,6 @@ export function formatDateTimeRangeValue(date: Date): string {
 export function formatDateTimeLabel(value: string): string {
   return new Intl.DateTimeFormat(getUILocale(), {
     dateStyle: "medium",
-    timeStyle: "short",
   }).format(new Date(value));
 }
 

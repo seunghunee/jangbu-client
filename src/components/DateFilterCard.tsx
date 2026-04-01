@@ -1,6 +1,6 @@
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import { useRef } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -9,43 +9,50 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { t } from "../i18n";
+import { getUILanguage, t } from "../i18n";
+
+const loadLazyDatePickerDialog = () =>
+  import("./LazyDatePickerDialog").then((module) => ({
+    default: module.LazyDatePickerDialog,
+  }));
+
+const LazyDatePickerDialog = lazy(loadLazyDatePickerDialog);
 
 type DateFilterCardProps = {
-  selectedDate: string;
+  selectedFromDate: string;
+  selectedToDate: string;
   selectedDateLabel: string;
   rangeDays: number;
   isLoading: boolean;
   rangeOptions: ReadonlyArray<{ label: string; days: number }>;
   onShiftDate: (delta: number) => void;
-  onSelectedDateChange: (value: string) => void;
+  onSelectedRangeChange: (fromDate: string, toDate: string) => void;
   onSelectRange: (days: number) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
 export function DateFilterCard({
-  selectedDate,
+  selectedFromDate,
+  selectedToDate,
   selectedDateLabel,
   rangeDays,
   isLoading,
   rangeOptions,
   onShiftDate,
-  onSelectedDateChange,
+  onSelectedRangeChange,
   onSelectRange,
   onSubmit,
 }: DateFilterCardProps) {
-  const dateInputRef = useRef<HTMLInputElement | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const dateButtonRef = useRef<HTMLButtonElement | null>(null);
+  const adapterLocale = getUILanguage() === "ko" ? "ko" : "en";
 
   function openDatePicker() {
-    const picker = dateInputRef.current;
-    if (!picker) {
-      return;
-    }
-    if (picker.showPicker) {
-      picker.showPicker();
-      return;
-    }
-    picker.click();
+    setIsDatePickerOpen(true);
+  }
+
+  function warmDatePickerChunk() {
+    void loadLazyDatePickerDialog();
   }
 
   return (
@@ -70,9 +77,13 @@ export function DateFilterCard({
               <ChevronLeftRoundedIcon />
             </Button>
             <Button
+              ref={dateButtonRef}
               variant="outlined"
               fullWidth
               onClick={openDatePicker}
+              onMouseEnter={warmDatePickerChunk}
+              onFocus={warmDatePickerChunk}
+              onTouchStart={warmDatePickerChunk}
               sx={{ justifyContent: "center" }}
             >
               {selectedDateLabel}
@@ -98,20 +109,24 @@ export function DateFilterCard({
                 {option.label}
               </Button>
             ))}
-            <Button variant="outlined" onClick={openDatePicker}>
-              {t("date.pickDate")}
-            </Button>
           </Stack>
 
-          <input
-            ref={dateInputRef}
-            type="date"
-            value={selectedDate}
-            style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
-            onChange={(event) => {
-              onSelectedDateChange(event.target.value);
-            }}
-          />
+          {isDatePickerOpen ? (
+            <Suspense fallback={null}>
+              <LazyDatePickerDialog
+                open={isDatePickerOpen}
+                selectedFromDate={selectedFromDate}
+                selectedToDate={selectedToDate}
+                adapterLocale={adapterLocale}
+                anchorEl={dateButtonRef.current}
+                onClose={() => setIsDatePickerOpen(false)}
+                onSelectRange={(fromDate, toDate) => {
+                  onSelectedRangeChange(fromDate, toDate);
+                  setIsDatePickerOpen(false);
+                }}
+              />
+            </Suspense>
+          ) : null}
 
           <Box component="form" onSubmit={onSubmit}>
             <Button

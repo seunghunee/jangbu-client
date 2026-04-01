@@ -35,7 +35,7 @@ export function App() {
     errorMessage,
     isLoading,
     setIdentityDraft,
-    setSelectedDate,
+    setSelectedRange,
     handleIdentitySubmit,
     handleIdentityReset,
     applyQuickRange,
@@ -110,13 +110,16 @@ export function App() {
           </Card>
 
           <DateFilterCard
-            selectedDate={form.selectedDate}
+            selectedFromDate={activeRange.from.slice(0, 10)}
+            selectedToDate={activeRange.to.slice(0, 10)}
             selectedDateLabel={`${formatDateTimeLabel(activeRange.from)} - ${formatDateTimeLabel(activeRange.to)}`}
             rangeDays={form.rangeDays}
             isLoading={isLoading}
             rangeOptions={rangeOptions}
-            onShiftDate={shiftSelectedDate}
-            onSelectedDateChange={setSelectedDate}
+            onShiftDate={(delta) => {
+              shiftSelectedDate(delta * form.rangeDays);
+            }}
+            onSelectedRangeChange={setSelectedRange}
             onSelectRange={applyQuickRange}
             onSubmit={handleSubmit}
           />

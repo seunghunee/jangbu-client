@@ -43,6 +43,8 @@ type MessageKey =
   | "date.prevDay"
   | "date.nextDay"
   | "date.pickDate"
+  | "date.cancel"
+  | "date.apply"
   | "date.loadSales"
   | "date.loadingReport"
   | "range.today"
@@ -84,12 +86,14 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "login.accountIdPlaceholder": "Enter your account ID",
     "login.submit": "Log in",
     "date.queryPeriod": "Query period",
-    "date.prevDay": "Previous day",
-    "date.nextDay": "Next day",
+    "date.prevDay": "Previous range",
+    "date.nextDay": "Next range",
     "date.pickDate": "Pick date",
+    "date.cancel": "Cancel",
+    "date.apply": "Apply",
     "date.loadSales": "Load sales",
     "date.loadingReport": "Loading report...",
-    "range.today": "Today",
+    "range.today": "1 day",
     "range.oneWeek": "1 week",
     "range.oneMonth": "1 month",
     "stats.grossSales": "Gross sales",
@@ -127,12 +131,14 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "login.accountIdPlaceholder": "계정 ID를 입력하세요",
     "login.submit": "로그인",
     "date.queryPeriod": "조회 기간",
-    "date.prevDay": "이전 날짜",
-    "date.nextDay": "다음 날짜",
+    "date.prevDay": "이전 기간",
+    "date.nextDay": "다음 기간",
     "date.pickDate": "날짜 선택",
+    "date.cancel": "취소",
+    "date.apply": "적용",
     "date.loadSales": "매출 조회",
     "date.loadingReport": "조회 중...",
-    "range.today": "오늘",
+    "range.today": "1일",
     "range.oneWeek": "1주일",
     "range.oneMonth": "1개월",
     "stats.grossSales": "총 매출",
