@@ -44,6 +44,10 @@ export function App() {
   } = useSalesReport();
 
   const rangeOptions = getRangeOptions();
+  const selectedDateLabel =
+    form.rangeDays === 1
+      ? formatDateTimeLabel(activeRange.to)
+      : `${formatDateTimeLabel(activeRange.from)} - ${formatDateTimeLabel(activeRange.to)}`;
 
   useEffect(() => {
     document.title = "Jangbu Client";
@@ -112,7 +116,7 @@ export function App() {
           <DateFilterCard
             selectedFromDate={activeRange.from.slice(0, 10)}
             selectedToDate={activeRange.to.slice(0, 10)}
-            selectedDateLabel={`${formatDateTimeLabel(activeRange.from)} - ${formatDateTimeLabel(activeRange.to)}`}
+            selectedDateLabel={selectedDateLabel}
             rangeDays={form.rangeDays}
             isLoading={isLoading}
             rangeOptions={rangeOptions}
