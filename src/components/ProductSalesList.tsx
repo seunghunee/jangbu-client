@@ -1,9 +1,7 @@
 import {
-  Box,
   Card,
   CardContent,
-  Chip,
-  Grid,
+  Collapse,
   Stack,
   Table,
   TableBody,
@@ -13,6 +11,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import type { ProducerSalesProduct } from "../api";
 import { t } from "../i18n";
 
@@ -27,96 +26,168 @@ export function ProductSalesList({
   formatInteger,
   formatKrw,
 }: ProductSalesListProps) {
+  const [expandedProductIds, setExpandedProductIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  function toggleExpanded(productId: string | number) {
+    const key = String(productId);
+    setExpandedProductIds((current) => {
+      const next = new Set(current);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }
+
   return (
     <>
       <Typography variant="subtitle1" color="text.secondary" sx={{ px: 0.5 }}>
         {t("product.itemsHeading")} ({formatInteger(products.length)})
       </Typography>
 
-      {products.map((product) => (
-        <Card key={product.productId}>
-          <CardContent>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent="space-between"
-              alignItems={{ xs: "flex-start", sm: "flex-start" }}
-              spacing={1}
-              sx={{ mb: 1.5 }}
-            >
-              <Box>
-                <Typography variant="overline" color="text.secondary">
-                  {t("product.product")}
-                </Typography>
-                <Typography variant="h6" sx={{ mt: 0.25, fontWeight: 700 }}>
+      {products.map((product) => {
+        const expanded = expandedProductIds.has(String(product.productId));
+
+        return (
+          <Card key={product.productId}>
+            <CardContent sx={{ py: 1.1, px: 1.5, "&:last-child": { pb: 1.1 } }}>
+              <Stack
+                role="button"
+                tabIndex={0}
+                direction="row"
+                justifyContent="space-between"
+                alignItems="baseline"
+                spacing={0.75}
+                onClick={() => {
+                  toggleExpanded(product.productId);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleExpanded(product.productId);
+                  }
+                }}
+                sx={{
+                  mb: expanded ? 1 : 0,
+                  cursor: "pointer",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{ mt: 0.25, fontWeight: 700, flex: 1, minWidth: 0 }}
+                >
                   {product.productName}
                 </Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" color="text.secondary">
-                  {formatInteger(product.soldQty)} {t("product.sold")}
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  {formatKrw(product.grossSalesKrw)}
-                </Typography>
-              </Box>
-            </Stack>
+                <Stack
+                  direction="row"
+                  spacing={1.25}
+                  alignItems="baseline"
+                  sx={{ ml: "auto", flexShrink: 0 }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    {formatInteger(product.soldQty)} {t("product.sold")}
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    {formatKrw(product.grossSalesKrw)}
+                  </Typography>
+                </Stack>
+              </Stack>
 
-            <Grid container spacing={1} sx={{ mb: 1.5 }}>
-              <Grid size={{ xs: 12, sm: 4 }}>
-                <Chip
-                  label={`${t("stats.fundTotal")} ${formatKrw(product.fundTotalKrw)}`}
-                  variant="outlined"
-                  sx={{ width: "100%", justifyContent: "flex-start" }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 4 }}>
-                <Chip
-                  label={`${t("table.payout")} ${formatKrw(product.payoutAmountKrw)}`}
-                  variant="outlined"
-                  sx={{ width: "100%", justifyContent: "flex-start" }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 4 }}>
-                <Chip
-                  label={`${t("product.variants")} ${formatInteger(product.items.length)}`}
-                  variant="outlined"
-                  sx={{ width: "100%", justifyContent: "flex-start" }}
-                />
-              </Grid>
-            </Grid>
-
-            <TableContainer
-              sx={{
-                borderRadius: 2,
-                border: (theme) => `1px solid ${theme.palette.divider}`,
-              }}
-            >
-              <Table size="small" sx={{ minWidth: 560 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{t("table.variant")}</TableCell>
-                    <TableCell>{t("table.sold")}</TableCell>
-                    <TableCell>{t("table.grossSales")}</TableCell>
-                    <TableCell>{t("table.fundTotal")}</TableCell>
-                    <TableCell>{t("table.payout")}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {product.items.map((item) => (
-                    <TableRow key={item.productVariantId}>
-                      <TableCell>{item.productVariantName}</TableCell>
-                      <TableCell>{formatInteger(item.soldQty)}</TableCell>
-                      <TableCell>{formatKrw(item.grossSalesKrw)}</TableCell>
-                      <TableCell>{formatKrw(item.fundTotalKrw)}</TableCell>
-                      <TableCell>{formatKrw(item.payoutAmountKrw)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        </Card>
-      ))}
+              <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <TableContainer
+                  sx={{
+                    borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+                    pt: 0.25,
+                  }}
+                >
+                  <Table
+                    size="small"
+                    sx={{
+                      width: "100%",
+                      tableLayout: "fixed",
+                      "& .MuiTableCell-root": {
+                        borderBottom: "none",
+                      },
+                    }}
+                  >
+                    <TableHead>
+                      <TableRow>
+                        <TableCell
+                          sx={{
+                            py: 0.5,
+                            fontSize: "0.7rem",
+                            fontWeight: 400,
+                            color: "text.secondary",
+                            letterSpacing: 0.2,
+                          }}
+                        >
+                          {t("table.variant")}
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          sx={{
+                            py: 0.5,
+                            whiteSpace: "nowrap",
+                            fontSize: "0.7rem",
+                            fontWeight: 400,
+                            color: "text.secondary",
+                            letterSpacing: 0.2,
+                          }}
+                        >
+                          {t("table.sold")}
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          sx={{
+                            py: 0.5,
+                            whiteSpace: "nowrap",
+                            fontSize: "0.7rem",
+                            fontWeight: 400,
+                            color: "text.secondary",
+                            letterSpacing: 0.2,
+                          }}
+                        >
+                          {t("table.grossSales")}
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {product.items.map((item) => (
+                        <TableRow key={item.productVariantId}>
+                          <TableCell
+                            sx={{
+                              overflowWrap: "anywhere",
+                              wordBreak: "break-word",
+                            }}
+                          >
+                            {item.productVariantName}
+                          </TableCell>
+                          <TableCell
+                            align="right"
+                            sx={{ whiteSpace: "nowrap" }}
+                          >
+                            {formatInteger(item.soldQty)}
+                          </TableCell>
+                          <TableCell
+                            align="right"
+                            sx={{ whiteSpace: "nowrap" }}
+                          >
+                            {formatKrw(item.grossSalesKrw)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Collapse>
+            </CardContent>
+          </Card>
+        );
+      })}
     </>
   );
 }

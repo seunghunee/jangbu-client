@@ -1,4 +1,4 @@
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import { alpha, createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 let theme = createTheme({
   shape: {
@@ -54,18 +54,18 @@ let theme = createTheme({
           paddingInline: 14,
           fontWeight: 700,
         },
-        outlined: {
-          borderColor: "rgba(15, 23, 42, 0.16)",
-        },
+        outlined: ({ theme }) => ({
+          borderColor: alpha(theme.palette.text.primary, 0.16),
+        }),
       },
     },
     MuiCard: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           borderRadius: 20,
-          border: "1px solid rgba(15, 23, 42, 0.08)",
+          border: `1px solid ${alpha(theme.palette.text.primary, 0.08)}`,
           backgroundImage: "none",
-        },
+        }),
       },
     },
     MuiCardContent: {
@@ -85,10 +85,10 @@ let theme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           borderRadius: 12,
-          backgroundColor: "#ffffff",
-        },
+          backgroundColor: theme.palette.background.paper,
+        }),
       },
     },
     MuiChip: {
@@ -101,10 +101,10 @@ let theme = createTheme({
     },
     MuiTableCell: {
       styleOverrides: {
-        head: {
+        head: ({ theme }) => ({
           fontWeight: 700,
-          color: "#64748b",
-        },
+          color: theme.palette.text.secondary,
+        }),
       },
     },
     MuiAlert: {

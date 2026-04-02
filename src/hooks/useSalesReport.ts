@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { fetchProducerSales, type ProducerSalesResponse } from "../api";
 import {
   getDefaultDateRange,
@@ -179,9 +179,7 @@ export function useSalesReport() {
     }));
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
+  const loadReport = useCallback(async () => {
     if (!identity) {
       setErrorMessage(t("error.loginRequired"));
       return;
@@ -204,7 +202,14 @@ export function useSalesReport() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [activeRange.from, activeRange.to, identity]);
+
+  useEffect(() => {
+    if (!identity) {
+      return;
+    }
+    void loadReport();
+  }, [identity, loadReport]);
 
   return {
     form,
@@ -223,6 +228,5 @@ export function useSalesReport() {
     handleIdentityReset,
     applyQuickRange,
     shiftSelectedDate,
-    handleSubmit,
   };
 }

@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { t } from "../i18n";
 
 type IdentityDraft = {
@@ -41,17 +42,16 @@ export function LoginCard({
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
         <Stack spacing={2.5}>
           <Box
-            sx={{
+            sx={(theme) => ({
               width: 76,
               height: 76,
               mx: "auto",
               borderRadius: 3,
               display: "grid",
               placeItems: "center",
-              background:
-                "linear-gradient(140deg, rgba(22,163,74,0.18), rgba(16,185,129,0.25))",
+              background: `linear-gradient(140deg, ${alpha(theme.palette.primary.main, 0.18)}, ${alpha(theme.palette.secondary.main, 0.24)})`,
               color: "primary.main",
-            }}
+            })}
           >
             <MenuBookRoundedIcon fontSize="large" />
           </Box>

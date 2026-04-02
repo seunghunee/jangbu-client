@@ -1,14 +1,7 @@
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { lazy, Suspense, useRef, useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, Card, CardContent, Stack } from "@mui/material";
 import { getUILanguage, t } from "../i18n";
 
 const loadLazyDatePickerDialog = () =>
@@ -28,7 +21,6 @@ type DateFilterCardProps = {
   onShiftDate: (delta: number) => void;
   onSelectedRangeChange: (fromDate: string, toDate: string) => void;
   onSelectRange: (days: number) => void;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
 export function DateFilterCard({
@@ -41,7 +33,6 @@ export function DateFilterCard({
   onShiftDate,
   onSelectedRangeChange,
   onSelectRange,
-  onSubmit,
 }: DateFilterCardProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const dateButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -57,20 +48,13 @@ export function DateFilterCard({
 
   return (
     <Card>
-      <CardContent>
-        <Stack spacing={1.5}>
-          <Typography
-            variant="overline"
-            color="text.secondary"
-            sx={{ fontWeight: 700 }}
-          >
-            {t("date.queryPeriod")}
-          </Typography>
-
-          <Stack direction="row" spacing={1} alignItems="center">
+      <CardContent sx={{ py: 1.25, px: 1.5, "&:last-child": { pb: 1.25 } }}>
+        <Stack spacing={1.1}>
+          <Stack direction="row" spacing={0.75} alignItems="center">
             <Button
               variant="outlined"
               onClick={() => onShiftDate(-1)}
+              disabled={isLoading}
               sx={{ minWidth: 42, px: 0 }}
               aria-label={t("date.prevDay")}
             >
@@ -84,6 +68,7 @@ export function DateFilterCard({
               onMouseEnter={warmDatePickerChunk}
               onFocus={warmDatePickerChunk}
               onTouchStart={warmDatePickerChunk}
+              disabled={isLoading}
               sx={{ justifyContent: "center" }}
             >
               {selectedDateLabel}
@@ -91,6 +76,7 @@ export function DateFilterCard({
             <Button
               variant="outlined"
               onClick={() => onShiftDate(1)}
+              disabled={isLoading}
               sx={{ minWidth: 42, px: 0 }}
               aria-label={t("date.nextDay")}
             >
@@ -98,13 +84,14 @@ export function DateFilterCard({
             </Button>
           </Stack>
 
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
             {rangeOptions.map((option) => (
               <Button
                 key={option.days}
                 variant={rangeDays === option.days ? "contained" : "outlined"}
                 color={rangeDays === option.days ? "secondary" : "inherit"}
                 onClick={() => onSelectRange(option.days)}
+                disabled={isLoading}
               >
                 {option.label}
               </Button>
@@ -127,17 +114,6 @@ export function DateFilterCard({
               />
             </Suspense>
           ) : null}
-
-          <Box component="form" onSubmit={onSubmit}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              disabled={isLoading}
-            >
-              {isLoading ? t("date.loadingReport") : t("date.loadSales")}
-            </Button>
-          </Box>
         </Stack>
       </CardContent>
     </Card>

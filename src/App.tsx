@@ -40,7 +40,6 @@ export function App() {
     handleIdentityReset,
     applyQuickRange,
     shiftSelectedDate,
-    handleSubmit,
   } = useSalesReport();
 
   const rangeOptions = getRangeOptions();
@@ -78,14 +77,16 @@ export function App() {
           onSubmit={handleIdentitySubmit}
         />
       ) : (
-        <Stack spacing={1.5}>
+        <Stack spacing={1}>
           <Card>
-            <CardContent>
+            <CardContent
+              sx={{ py: 1.25, px: 1.5, "&:last-child": { pb: 1.25 } }}
+            >
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 alignItems={{ xs: "flex-start", sm: "center" }}
                 justifyContent="space-between"
-                spacing={1.25}
+                spacing={1}
               >
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {t("app.salesReport")}
@@ -125,27 +126,22 @@ export function App() {
             }}
             onSelectedRangeChange={setSelectedRange}
             onSelectRange={applyQuickRange}
-            onSubmit={handleSubmit}
           />
         </Stack>
       )}
 
       {errorMessage ? (
-        <Alert severity="error" sx={{ mt: 1.5 }}>
+        <Alert severity="error" sx={{ mt: 1 }}>
           {errorMessage}
         </Alert>
       ) : null}
 
       {report && totals ? (
-        <Stack spacing={1.5} sx={{ mt: 1.5 }}>
+        <Stack spacing={1} sx={{ mt: 1 }}>
           <ReportStats
             totals={totals}
-            reportFrom={report.from}
-            reportTo={report.to}
-            productCount={report.products.length}
             formatKrw={formatKrw}
             formatInteger={formatInteger}
-            formatDateTimeLabel={formatDateTimeLabel}
           />
 
           <ProductSalesList
