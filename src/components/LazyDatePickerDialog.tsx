@@ -102,6 +102,7 @@ export function LazyDatePickerDialog({
           <DateCalendar
             value={calendarValue}
             onChange={handleSelectDate}
+            showDaysOutsideCurrentMonth
             sx={{
               px: 1,
               "& .MuiDayCalendar-weekContainer": {
@@ -110,11 +111,22 @@ export function LazyDatePickerDialog({
               "& .MuiPickersDay-root": {
                 margin: 0,
               },
+              "& .MuiPickersDay-root.MuiPickersDay-dayOutsideMonth": {
+                color: "text.disabled",
+                opacity: 0.58,
+              },
             }}
             slots={{ day: PickersDay }}
             slotProps={{
               day: (ownerState) => {
                 const day = ownerState.day as Dayjs;
+                const isOutsideMonth = Boolean(
+                  (ownerState as { outsideCurrentMonth?: boolean })
+                    .outsideCurrentMonth ??
+                  (calendarValue
+                    ? day.month() !== calendarValue.month()
+                    : false),
+                );
                 const hasRange = Boolean(draftFrom && previewEnd);
                 const isStart = Boolean(
                   draftFrom && day.isSame(draftFrom, "day"),
@@ -146,11 +158,21 @@ export function LazyDatePickerDialog({
                   sx: {
                     borderRadius: 0,
                     mx: 0,
+                    ...(!isOutsideMonth && {
+                      color: "text.primary",
+                      opacity: 1,
+                    }),
+                    ...(isOutsideMonth &&
+                      !isStart &&
+                      !isEnd && {
+                        color: "text.disabled",
+                        opacity: 0.7,
+                      }),
                     ...(isInRange &&
                       !isStart &&
                       !isEnd && {
                         backgroundColor: (theme) =>
-                          alpha(theme.palette.primary.main, 0.14),
+                          alpha(theme.palette.primary.main, 0.16),
                       }),
                     ...(isStart && {
                       borderRadius: "50%",
@@ -175,7 +197,7 @@ export function LazyDatePickerDialog({
                         !isStart &&
                         !isEnd && {
                           backgroundColor: (theme) =>
-                            alpha(theme.palette.primary.main, 0.2),
+                            alpha(theme.palette.primary.main, 0.22),
                         }),
                       ...(isStart || isEnd
                         ? {

@@ -11,6 +11,7 @@ import { getUILocale, t } from "../i18n";
 type FormState = {
   selectedDate: string;
   rangeDays: number;
+  rangePreset: "day" | "week" | "month" | "year" | "custom";
 };
 
 type IdentityState = {
@@ -33,6 +34,7 @@ export function getRangeOptions() {
 const initialFormState: FormState = {
   selectedDate: initialDateRange.to.slice(0, 10),
   rangeDays: 1,
+  rangePreset: "day",
 };
 
 function loadStoredIdentity(): IdentityState | null {
@@ -78,6 +80,63 @@ function getInclusiveDayDistance(fromDate: string, toDate: string): number {
 }
 
 function getRequestDateRange(form: FormState): { from: string; to: string } {
+  if (form.rangePreset === "week") {
+    const selected = new Date(`${form.selectedDate}T00:00:00`);
+    const day = selected.getDay();
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+
+    const from = new Date(selected);
+    from.setDate(selected.getDate() + mondayOffset);
+    from.setHours(0, 0, 0, 0);
+
+    const to = new Date(from);
+    to.setDate(from.getDate() + 6);
+    to.setHours(23, 59, 59, 0);
+
+    return {
+      from: toDateTimeLocalValue(from),
+      to: toDateTimeLocalValue(to),
+    };
+  }
+
+  if (form.rangePreset === "month") {
+    const selected = new Date(`${form.selectedDate}T00:00:00`);
+    const from = new Date(
+      selected.getFullYear(),
+      selected.getMonth(),
+      1,
+      0,
+      0,
+      0,
+      0,
+    );
+    const to = new Date(
+      selected.getFullYear(),
+      selected.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      0,
+    );
+
+    return {
+      from: toDateTimeLocalValue(from),
+      to: toDateTimeLocalValue(to),
+    };
+  }
+
+  if (form.rangePreset === "year") {
+    const selected = new Date(`${form.selectedDate}T00:00:00`);
+    const from = new Date(selected.getFullYear(), 0, 1, 0, 0, 0, 0);
+    const to = new Date(selected.getFullYear(), 11, 31, 23, 59, 59, 0);
+
+    return {
+      from: toDateTimeLocalValue(from),
+      to: toDateTimeLocalValue(to),
+    };
+  }
+
   const end = new Date(`${form.selectedDate}T23:59:59`);
   const from = new Date(end);
   from.setDate(end.getDate() - (form.rangeDays - 1));
@@ -132,6 +191,7 @@ export function useSalesReport() {
       ...current,
       selectedDate: to,
       rangeDays,
+      rangePreset: "custom",
     }));
   }
 
@@ -166,17 +226,42 @@ export function useSalesReport() {
 
   function applyQuickRange(days: number) {
     const today = toDateTimeLocalValue(new Date()).slice(0, 10);
+    const rangePreset: FormState["rangePreset"] =
+      days === 7
+        ? "week"
+        : days === 30
+          ? "month"
+          : days === 365
+            ? "year"
+            : "day";
+
     setForm((current) => ({
       ...current,
       selectedDate: today,
       rangeDays: days,
+      rangePreset,
     }));
   }
 
-  function shiftSelectedDate(deltaDays: number) {
+  function shiftSelectedDate(step: number) {
     setForm((current) => ({
       ...current,
-      selectedDate: shiftDateValue(current.selectedDate, deltaDays),
+      selectedDate:
+        current.rangePreset === "week"
+          ? shiftDateValue(current.selectedDate, step * 7)
+          : current.rangePreset === "month"
+            ? (() => {
+                const date = new Date(`${current.selectedDate}T00:00:00`);
+                date.setMonth(date.getMonth() + step);
+                return toDateTimeLocalValue(date).slice(0, 10);
+              })()
+            : current.rangePreset === "year"
+              ? (() => {
+                  const date = new Date(`${current.selectedDate}T00:00:00`);
+                  date.setFullYear(date.getFullYear() + step);
+                  return toDateTimeLocalValue(date).slice(0, 10);
+                })()
+              : shiftDateValue(current.selectedDate, step * current.rangeDays),
     }));
   }
 

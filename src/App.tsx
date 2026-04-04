@@ -103,7 +103,7 @@ export function App() {
               isLoading={isLoading}
               rangeOptions={rangeOptions}
               onShiftDate={(delta) => {
-                shiftSelectedDate(delta * form.rangeDays);
+                shiftSelectedDate(delta);
               }}
               onSelectedRangeChange={setSelectedRange}
               onSelectRange={applyQuickRange}
