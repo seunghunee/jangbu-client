@@ -91,7 +91,10 @@ export function ProductSalesList({
                   <Typography variant="body2" color="text.secondary">
                     {formatInteger(product.soldQty)} {t("product.sold")}
                   </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 700, color: "secondary.main" }}
+                  >
                     {formatKrw(product.grossSalesKrw)}
                   </Typography>
                 </Stack>
@@ -174,7 +177,10 @@ export function ProductSalesList({
                           </TableCell>
                           <TableCell
                             align="right"
-                            sx={{ whiteSpace: "nowrap" }}
+                            sx={{
+                              whiteSpace: "nowrap",
+                              color: "secondary.main",
+                            }}
                           >
                             {formatKrw(item.grossSalesKrw)}
                           </TableCell>

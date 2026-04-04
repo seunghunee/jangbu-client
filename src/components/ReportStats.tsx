@@ -40,7 +40,10 @@ export function ReportStats({
                 <Typography variant="overline" color="text.secondary">
                   {t("stats.grossSales")}
                 </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 700, color: "secondary.main" }}
+                >
                   {formatKrw(totals.grossSalesKrw)}
                 </Typography>
               </Stack>

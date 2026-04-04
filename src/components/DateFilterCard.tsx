@@ -1,7 +1,16 @@
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { lazy, Suspense, useRef, useState } from "react";
-import { Button, Card, CardContent, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { getUILanguage, t } from "../i18n";
 
 const loadLazyDatePickerDialog = () =>
@@ -47,42 +56,79 @@ export function DateFilterCard({
   }
 
   return (
-    <Card>
+    <Card sx={{ border: "none" }}>
       <CardContent sx={{ py: 1.25, px: 1.5, "&:last-child": { pb: 1.25 } }}>
-        <Stack spacing={1.1}>
-          <Stack direction="row" spacing={0.75} alignItems="center">
-            <Button
-              variant="outlined"
-              onClick={() => onShiftDate(-1)}
-              disabled={isLoading}
-              sx={{ minWidth: 42, px: 0 }}
-              aria-label={t("date.prevDay")}
-            >
-              <ChevronLeftRoundedIcon />
-            </Button>
-            <Button
-              ref={dateButtonRef}
-              variant="outlined"
-              fullWidth
-              onClick={openDatePicker}
-              onMouseEnter={warmDatePickerChunk}
-              onFocus={warmDatePickerChunk}
-              onTouchStart={warmDatePickerChunk}
-              disabled={isLoading}
-              sx={{ justifyContent: "center" }}
-            >
-              {selectedDateLabel}
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => onShiftDate(1)}
-              disabled={isLoading}
-              sx={{ minWidth: 42, px: 0 }}
-              aria-label={t("date.nextDay")}
-            >
-              <ChevronRightRoundedIcon />
-            </Button>
-          </Stack>
+        <Stack spacing={1.15}>
+          <Box
+            sx={(theme) => ({
+              border: `1px solid ${alpha(theme.palette.text.primary, 0.12)}`,
+              backgroundColor: alpha(theme.palette.background.default, 0.56),
+              borderRadius: 3,
+              px: 1,
+              py: 0.85,
+            })}
+          >
+            <Stack direction="row" spacing={0.75} alignItems="center">
+              <IconButton
+                size="small"
+                onClick={() => onShiftDate(-1)}
+                disabled={isLoading}
+                aria-label={t("date.prevDay")}
+                sx={{ width: 38, height: 38 }}
+              >
+                <ChevronLeftRoundedIcon />
+              </IconButton>
+              <Button
+                ref={dateButtonRef}
+                variant="text"
+                fullWidth
+                onClick={openDatePicker}
+                onMouseEnter={warmDatePickerChunk}
+                onFocus={warmDatePickerChunk}
+                onTouchStart={warmDatePickerChunk}
+                disabled={isLoading}
+                sx={{
+                  justifyContent: "center",
+                  display: "grid",
+                  minHeight: 42,
+                  py: 0.15,
+                  color: "text.primary",
+                }}
+              >
+                <Typography
+                  component="span"
+                  sx={{
+                    fontSize: "0.72rem",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {t("date.queryPeriod")}
+                </Typography>
+                <Typography
+                  component="span"
+                  sx={{
+                    fontSize: "1rem",
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {selectedDateLabel}
+                </Typography>
+              </Button>
+              <IconButton
+                size="small"
+                onClick={() => onShiftDate(1)}
+                disabled={isLoading}
+                aria-label={t("date.nextDay")}
+                sx={{ width: 38, height: 38 }}
+              >
+                <ChevronRightRoundedIcon />
+              </IconButton>
+            </Stack>
+          </Box>
 
           <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
             {rangeOptions.map((option) => (
@@ -92,6 +138,7 @@ export function DateFilterCard({
                 color={rangeDays === option.days ? "secondary" : "inherit"}
                 onClick={() => onSelectRange(option.days)}
                 disabled={isLoading}
+                sx={{ minHeight: 38, px: 1.55 }}
               >
                 {option.label}
               </Button>
