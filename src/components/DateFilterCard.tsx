@@ -91,7 +91,7 @@ export function DateFilterCard({
                   justifyContent: "center",
                   display: "grid",
                   minHeight: 42,
-                  py: 0.15,
+                  py: 0.45,
                   color: "text.primary",
                 }}
               >
@@ -109,7 +109,7 @@ export function DateFilterCard({
                 <Typography
                   component="span"
                   sx={{
-                    fontSize: "1rem",
+                    fontSize: { xs: "1.08rem", sm: "1.14rem" },
                     fontWeight: 700,
                     lineHeight: 1.2,
                     letterSpacing: "-0.01em",

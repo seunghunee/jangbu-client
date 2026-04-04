@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { t } from "../i18n";
 
 type Totals = {
@@ -22,24 +22,42 @@ export function ReportStats({
       <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent sx={{ py: 1, px: 1.5, "&:last-child": { pb: 1 } }}>
-            <Stack
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-              alignItems="baseline"
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "1fr auto auto",
+                alignItems: "baseline",
+                columnGap: 1.6,
+              }}
             >
-              <Stack direction="row" spacing={1} alignItems="baseline">
-                <Typography variant="overline" color="text.secondary">
-                  {t("stats.unitsSold")}
-                </Typography>
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{ fontWeight: 700 }}
+              >
+                {t("stats.total")}
+              </Typography>
+
+              <Stack
+                direction="row"
+                spacing={0.35}
+                alignItems="baseline"
+                sx={{ justifySelf: "end" }}
+              >
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
                   {formatInteger(totals.soldQty)}
                 </Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="baseline">
-                <Typography variant="overline" color="text.secondary">
-                  {t("stats.grossSales")}
+                <Typography variant="body2" color="text.secondary">
+                  {t("product.sold")}
                 </Typography>
+              </Stack>
+
+              <Stack
+                direction="row"
+                spacing={0.35}
+                alignItems="baseline"
+                sx={{ justifySelf: "end" }}
+              >
                 <Typography
                   variant="h6"
                   sx={{ fontWeight: 700, color: "secondary.main" }}
@@ -47,7 +65,7 @@ export function ReportStats({
                   {formatKrw(totals.grossSalesKrw)}
                 </Typography>
               </Stack>
-            </Stack>
+            </Box>
           </CardContent>
         </Card>
       </Grid>
