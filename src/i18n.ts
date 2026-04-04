@@ -63,6 +63,10 @@ type MessageKey =
   | "product.product"
   | "product.sold"
   | "product.variants"
+  | "footer.home"
+  | "footer.sales"
+  | "footer.inventory"
+  | "footer.settings"
   | "table.variant"
   | "table.sold"
   | "table.grossSales"
@@ -109,6 +113,10 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "product.product": "Product",
     "product.sold": "sold",
     "product.variants": "Variants",
+    "footer.home": "Home",
+    "footer.sales": "Sales",
+    "footer.inventory": "Inventory",
+    "footer.settings": "Settings",
     "table.variant": "Variant",
     "table.sold": "Sold",
     "table.grossSales": "Gross sales",
@@ -154,6 +162,10 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "product.product": "상품",
     "product.sold": "판매",
     "product.variants": "옵션 수",
+    "footer.home": "홈",
+    "footer.sales": "매출조회",
+    "footer.inventory": "재고관리",
+    "footer.settings": "설정",
     "table.variant": "옵션",
     "table.sold": "판매",
     "table.grossSales": "총 매출",
