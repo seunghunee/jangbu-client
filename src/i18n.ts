@@ -50,6 +50,7 @@ type MessageKey =
   | "range.today"
   | "range.oneWeek"
   | "range.oneMonth"
+  | "range.oneYear"
   | "stats.grossSales"
   | "stats.fundTotal"
   | "stats.payoutAmount"
@@ -100,6 +101,7 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "range.today": "1 day",
     "range.oneWeek": "1 week",
     "range.oneMonth": "1 month",
+    "range.oneYear": "1 year",
     "stats.grossSales": "Gross sales",
     "stats.fundTotal": "Fund total",
     "stats.payoutAmount": "Payout amount",
@@ -149,6 +151,7 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "range.today": "1일",
     "range.oneWeek": "1주일",
     "range.oneMonth": "1개월",
+    "range.oneYear": "1년",
     "stats.grossSales": "총 매출",
     "stats.fundTotal": "펀드 합계",
     "stats.payoutAmount": "정산 금액",

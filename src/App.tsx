@@ -169,7 +169,7 @@ export function App() {
               <Stack
                 spacing={0.2}
                 alignItems="center"
-                sx={{ flex: 1, color: "secondary.main" }}
+                sx={{ flex: 1, color: "primary.main" }}
               >
                 <BarChartRoundedIcon fontSize="small" />
                 <Typography

@@ -74,7 +74,7 @@ export function DateFilterCard({
                 onClick={() => onShiftDate(-1)}
                 disabled={isLoading}
                 aria-label={t("date.prevDay")}
-                sx={{ width: 38, height: 38 }}
+                sx={{ width: 38, height: 38, color: "primary.main" }}
               >
                 <ChevronLeftRoundedIcon />
               </IconButton>
@@ -98,8 +98,8 @@ export function DateFilterCard({
                 <Typography
                   component="span"
                   sx={{
-                    fontSize: "0.72rem",
-                    fontWeight: 600,
+                    fontSize: "0.66rem",
+                    fontWeight: 400,
                     color: "text.secondary",
                     lineHeight: 1.2,
                   }}
@@ -123,7 +123,7 @@ export function DateFilterCard({
                 onClick={() => onShiftDate(1)}
                 disabled={isLoading}
                 aria-label={t("date.nextDay")}
-                sx={{ width: 38, height: 38 }}
+                sx={{ width: 38, height: 38, color: "primary.main" }}
               >
                 <ChevronRightRoundedIcon />
               </IconButton>
@@ -135,7 +135,7 @@ export function DateFilterCard({
               <Button
                 key={option.days}
                 variant={rangeDays === option.days ? "contained" : "outlined"}
-                color={rangeDays === option.days ? "secondary" : "inherit"}
+                color={rangeDays === option.days ? "primary" : "inherit"}
                 onClick={() => onSelectRange(option.days)}
                 disabled={isLoading}
                 sx={{ minHeight: 38, px: 1.55 }}

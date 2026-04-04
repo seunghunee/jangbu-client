@@ -1,6 +1,5 @@
 import {
-  Card,
-  CardContent,
+  Box,
   Collapse,
   Stack,
   Table,
@@ -11,6 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import { useState } from "react";
 import type { ProducerSalesProduct } from "../api";
 import { t } from "../i18n";
@@ -45,22 +45,30 @@ export function ProductSalesList({
 
   return (
     <>
-      <Typography variant="subtitle1" color="text.secondary" sx={{ px: 0.5 }}>
+      <Typography variant="subtitle1" color="text.secondary" sx={{ px: 0.9 }}>
         {t("product.itemsHeading")} ({formatInteger(products.length)})
       </Typography>
 
-      {products.map((product) => {
-        const expanded = expandedProductIds.has(String(product.productId));
+      <Box
+        sx={{
+          mt: 0.2,
+          borderTop: "1px solid",
+          borderBottom: "1px solid",
+          borderColor: "divider",
+        }}
+      >
+        {products.map((product, index) => {
+          const expanded = expandedProductIds.has(String(product.productId));
+          const showDivider = expanded || index < products.length - 1;
 
-        return (
-          <Card key={product.productId}>
-            <CardContent sx={{ py: 1.1, px: 1.5, "&:last-child": { pb: 1.1 } }}>
+          return (
+            <Box key={product.productId}>
               <Stack
                 role="button"
                 tabIndex={0}
                 direction="row"
                 justifyContent="space-between"
-                alignItems="baseline"
+                alignItems="center"
                 spacing={0.75}
                 onClick={() => {
                   toggleExpanded(product.productId);
@@ -72,20 +80,20 @@ export function ProductSalesList({
                   }
                 }}
                 sx={{
-                  mb: expanded ? 1 : 0,
+                  px: 1.4,
+                  py: 1.68,
+                  borderBottom: showDivider ? "1px solid" : "none",
+                  borderColor: "divider",
                   cursor: "pointer",
                 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{ mt: 0.25, fontWeight: 700, flex: 1, minWidth: 0 }}
-                >
+                <Typography sx={{ fontWeight: 700, flex: 1, minWidth: 0 }}>
                   {product.productName}
                 </Typography>
                 <Stack
                   direction="row"
-                  spacing={1.25}
-                  alignItems="baseline"
+                  spacing={1.45}
+                  alignItems="center"
                   sx={{ ml: "auto", flexShrink: 0 }}
                 >
                   <Typography variant="body2" color="text.secondary">
@@ -97,14 +105,25 @@ export function ProductSalesList({
                   >
                     {formatKrw(product.grossSalesKrw)}
                   </Typography>
+                  <ExpandMoreRoundedIcon
+                    sx={{
+                      fontSize: "1.1rem",
+                      color: "text.secondary",
+                      transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 180ms ease",
+                    }}
+                  />
                 </Stack>
               </Stack>
 
               <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <TableContainer
                   sx={{
-                    borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-                    pt: 0.25,
+                    px: 1.4,
+                    pb: 1,
+                    borderBottom:
+                      index < products.length - 1 ? "1px solid" : "none",
+                    borderColor: "divider",
                   }}
                 >
                   <Table
@@ -121,7 +140,7 @@ export function ProductSalesList({
                       <TableRow>
                         <TableCell
                           sx={{
-                            py: 0.5,
+                            py: 0.45,
                             fontSize: "0.7rem",
                             fontWeight: 400,
                             color: "text.secondary",
@@ -133,7 +152,7 @@ export function ProductSalesList({
                         <TableCell
                           align="right"
                           sx={{
-                            py: 0.5,
+                            py: 0.45,
                             whiteSpace: "nowrap",
                             fontSize: "0.7rem",
                             fontWeight: 400,
@@ -146,7 +165,7 @@ export function ProductSalesList({
                         <TableCell
                           align="right"
                           sx={{
-                            py: 0.5,
+                            py: 0.45,
                             whiteSpace: "nowrap",
                             fontSize: "0.7rem",
                             fontWeight: 400,
@@ -190,10 +209,10 @@ export function ProductSalesList({
                   </Table>
                 </TableContainer>
               </Collapse>
-            </CardContent>
-          </Card>
-        );
-      })}
+            </Box>
+          );
+        })}
+      </Box>
     </>
   );
 }

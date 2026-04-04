@@ -26,6 +26,7 @@ export function getRangeOptions() {
     { label: t("range.today"), days: 1 },
     { label: t("range.oneWeek"), days: 7 },
     { label: t("range.oneMonth"), days: 30 },
+    { label: t("range.oneYear"), days: 365 },
   ] as const;
 }
 
