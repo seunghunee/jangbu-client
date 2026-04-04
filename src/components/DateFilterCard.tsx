@@ -1,6 +1,6 @@
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import { lazy, Suspense, useRef, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import {
   Box,
   Button,
@@ -44,7 +44,6 @@ export function DateFilterCard({
   onSelectRange,
 }: DateFilterCardProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const dateButtonRef = useRef<HTMLButtonElement | null>(null);
   const adapterLocale = getUILanguage() === "ko" ? "ko" : "en";
 
   function openDatePicker() {
@@ -79,7 +78,6 @@ export function DateFilterCard({
                 <ChevronLeftRoundedIcon />
               </IconButton>
               <Button
-                ref={dateButtonRef}
                 variant="text"
                 fullWidth
                 onClick={openDatePicker}
@@ -152,7 +150,6 @@ export function DateFilterCard({
                 selectedFromDate={selectedFromDate}
                 selectedToDate={selectedToDate}
                 adapterLocale={adapterLocale}
-                anchorEl={dateButtonRef.current}
                 onClose={() => setIsDatePickerOpen(false)}
                 onSelectRange={(fromDate, toDate) => {
                   onSelectedRangeChange(fromDate, toDate);

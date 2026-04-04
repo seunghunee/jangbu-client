@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import dayjs, { type Dayjs } from "dayjs";
-import { ClickAwayListener, Paper, Popper } from "@mui/material";
+import { Dialog, DialogContent } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import {
   DateCalendar,
@@ -14,7 +14,6 @@ type LazyDatePickerDialogProps = {
   selectedFromDate: string;
   selectedToDate: string;
   adapterLocale: string;
-  anchorEl: HTMLElement | null;
   onClose: () => void;
   onSelectRange: (fromDate: string, toDate: string) => void;
 };
@@ -24,7 +23,6 @@ export function LazyDatePickerDialog({
   selectedFromDate,
   selectedToDate,
   adapterLocale,
-  anchorEl,
   onClose,
   onSelectRange,
 }: LazyDatePickerDialogProps) {
@@ -79,129 +77,131 @@ export function LazyDatePickerDialog({
       dateAdapter={AdapterDayjs}
       adapterLocale={adapterLocale}
     >
-      <Popper
+      <Dialog
         open={open}
-        anchorEl={anchorEl}
-        placement="bottom-start"
-        sx={{ zIndex: 1300 }}
+        onClose={onClose}
+        maxWidth={false}
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            width: 340,
+            maxWidth: "calc(100vw - 16px)",
+            overflow: "hidden",
+            m: 1,
+          },
+        }}
       >
-        <ClickAwayListener onClickAway={onClose}>
-          <Paper
-            elevation={8}
+        <DialogContent
+          sx={{
+            p: 0,
+            "&:last-child": { pb: 0 },
+          }}
+        >
+          <DateCalendar
+            value={calendarValue}
+            onChange={handleSelectDate}
             sx={{
-              mt: 1,
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-              width: 340,
-              maxWidth: "calc(100vw - 16px)",
-              overflow: "hidden",
+              px: 1,
+              "& .MuiDayCalendar-weekContainer": {
+                gap: 0,
+              },
+              "& .MuiPickersDay-root": {
+                margin: 0,
+              },
             }}
-          >
-            <DateCalendar
-              value={calendarValue}
-              onChange={handleSelectDate}
-              sx={{
-                px: 1,
-                "& .MuiDayCalendar-weekContainer": {
-                  gap: 0,
-                },
-                "& .MuiPickersDay-root": {
-                  margin: 0,
-                },
-              }}
-              slots={{ day: PickersDay }}
-              slotProps={{
-                day: (ownerState) => {
-                  const day = ownerState.day as Dayjs;
-                  const hasRange = Boolean(draftFrom && previewEnd);
-                  const isStart = Boolean(
-                    draftFrom && day.isSame(draftFrom, "day"),
-                  );
-                  const isEnd = Boolean(
-                    previewEnd && day.isSame(previewEnd, "day"),
-                  );
-                  const isInRange = Boolean(
-                    hasRange &&
-                    draftFrom &&
-                    previewEnd &&
-                    (day.isAfter(draftFrom, "day") ||
-                      day.isSame(draftFrom, "day")) &&
-                    (day.isBefore(previewEnd, "day") ||
-                      day.isSame(previewEnd, "day")),
-                  );
+            slots={{ day: PickersDay }}
+            slotProps={{
+              day: (ownerState) => {
+                const day = ownerState.day as Dayjs;
+                const hasRange = Boolean(draftFrom && previewEnd);
+                const isStart = Boolean(
+                  draftFrom && day.isSame(draftFrom, "day"),
+                );
+                const isEnd = Boolean(
+                  previewEnd && day.isSame(previewEnd, "day"),
+                );
+                const isInRange = Boolean(
+                  hasRange &&
+                  draftFrom &&
+                  previewEnd &&
+                  (day.isAfter(draftFrom, "day") ||
+                    day.isSame(draftFrom, "day")) &&
+                  (day.isBefore(previewEnd, "day") ||
+                    day.isSame(previewEnd, "day")),
+                );
 
-                  return {
-                    onMouseEnter: () => {
-                      if (draftFrom && !draftTo) {
-                        setHoveredDay(day);
-                      }
-                    },
-                    onFocus: () => {
-                      if (draftFrom && !draftTo) {
-                        setHoveredDay(day);
-                      }
-                    },
-                    sx: {
-                      borderRadius: 0,
-                      mx: 0,
+                return {
+                  onMouseEnter: () => {
+                    if (draftFrom && !draftTo) {
+                      setHoveredDay(day);
+                    }
+                  },
+                  onFocus: () => {
+                    if (draftFrom && !draftTo) {
+                      setHoveredDay(day);
+                    }
+                  },
+                  sx: {
+                    borderRadius: 0,
+                    mx: 0,
+                    ...(isInRange &&
+                      !isStart &&
+                      !isEnd && {
+                        backgroundColor: (theme) =>
+                          alpha(theme.palette.primary.main, 0.14),
+                      }),
+                    ...(isStart && {
+                      borderRadius: "50%",
+                      backgroundColor: "primary.main",
+                      color: "primary.contrastText",
+                      backgroundImage: !isEnd
+                        ? (theme) =>
+                            `linear-gradient(to right, transparent 50%, ${alpha(theme.palette.primary.main, 0.14)} 50%)`
+                        : undefined,
+                    }),
+                    ...(isEnd && {
+                      borderRadius: "50%",
+                      backgroundColor: "primary.main",
+                      color: "primary.contrastText",
+                      backgroundImage: !isStart
+                        ? (theme) =>
+                            `linear-gradient(to left, transparent 50%, ${alpha(theme.palette.primary.main, 0.14)} 50%)`
+                        : undefined,
+                    }),
+                    "&:hover": {
                       ...(isInRange &&
                         !isStart &&
                         !isEnd && {
                           backgroundColor: (theme) =>
-                            alpha(theme.palette.primary.main, 0.14),
+                            alpha(theme.palette.primary.main, 0.2),
                         }),
-                      ...(isStart && {
-                        borderRadius: "50%",
-                        backgroundColor: "primary.main",
-                        color: "primary.contrastText",
-                        backgroundImage: !isEnd
-                          ? (theme) =>
-                              `linear-gradient(to right, transparent 50%, ${alpha(theme.palette.primary.main, 0.14)} 50%)`
-                          : undefined,
-                      }),
-                      ...(isEnd && {
-                        borderRadius: "50%",
-                        backgroundColor: "primary.main",
-                        color: "primary.contrastText",
-                        backgroundImage: !isStart
-                          ? (theme) =>
-                              `linear-gradient(to left, transparent 50%, ${alpha(theme.palette.primary.main, 0.14)} 50%)`
-                          : undefined,
-                      }),
-                      "&:hover": {
-                        ...(isInRange &&
-                          !isStart &&
-                          !isEnd && {
-                            backgroundColor: (theme) =>
-                              alpha(theme.palette.primary.main, 0.2),
-                          }),
-                        ...(isStart || isEnd
-                          ? {
-                              backgroundColor: "primary.dark",
-                              ...(isStart && !isEnd
-                                ? {
-                                    backgroundImage: (theme) =>
-                                      `linear-gradient(to right, transparent 50%, ${alpha(theme.palette.primary.main, 0.2)} 50%)`,
-                                  }
-                                : {}),
-                              ...(isEnd && !isStart
-                                ? {
-                                    backgroundImage: (theme) =>
-                                      `linear-gradient(to left, transparent 50%, ${alpha(theme.palette.primary.main, 0.2)} 50%)`,
-                                  }
-                                : {}),
-                            }
-                          : {}),
-                      },
+                      ...(isStart || isEnd
+                        ? {
+                            backgroundColor: "primary.dark",
+                            ...(isStart && !isEnd
+                              ? {
+                                  backgroundImage: (theme) =>
+                                    `linear-gradient(to right, transparent 50%, ${alpha(theme.palette.primary.main, 0.2)} 50%)`,
+                                }
+                              : {}),
+                            ...(isEnd && !isStart
+                              ? {
+                                  backgroundImage: (theme) =>
+                                    `linear-gradient(to left, transparent 50%, ${alpha(theme.palette.primary.main, 0.2)} 50%)`,
+                                }
+                              : {}),
+                          }
+                        : {}),
                     },
-                  };
-                },
-              }}
-            />
-          </Paper>
-        </ClickAwayListener>
-      </Popper>
+                  },
+                };
+              },
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </LocalizationProvider>
   );
 }
