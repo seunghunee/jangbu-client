@@ -1,6 +1,5 @@
 export type UILanguage = "en" | "ko";
 
-const LANGUAGE_STORAGE_KEY = "jangbu.uiLanguage";
 const DEFAULT_UI_LANGUAGE: UILanguage = "en";
 
 const LOCALE_BY_LANGUAGE: Record<UILanguage, string> = {
@@ -12,19 +11,20 @@ function isUILanguage(value: string): value is UILanguage {
   return value === "en" || value === "ko";
 }
 
-function loadStoredLanguage(): UILanguage {
-  if (typeof window === "undefined") {
+function detectSystemLanguage(): UILanguage {
+  if (typeof navigator === "undefined") {
     return DEFAULT_UI_LANGUAGE;
   }
 
-  const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-  if (stored && isUILanguage(stored)) {
-    return stored;
+  const languageCode = navigator.language.toLowerCase().split("-")[0];
+  if (isUILanguage(languageCode)) {
+    return languageCode;
   }
+
   return DEFAULT_UI_LANGUAGE;
 }
 
-let currentLanguage: UILanguage = loadStoredLanguage();
+let currentLanguage: UILanguage = detectSystemLanguage();
 
 type MessageKey =
   | "app.salesReport"
@@ -174,9 +174,6 @@ export function getUILanguage(): UILanguage {
 
 export function setUILanguage(language: UILanguage) {
   currentLanguage = language;
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-  }
 }
 
 export function getUILocale(): string {

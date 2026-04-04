@@ -1,14 +1,6 @@
 import { useEffect } from "react";
-import {
-  Alert,
-  Button,
-  Card,
-  CardContent,
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, IconButton, Stack, Typography } from "@mui/material";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { formatDateTimeLabel, formatInteger, formatKrw } from "./format";
 import {
   AppLayout,
@@ -18,12 +10,9 @@ import {
   ReportStats,
 } from "./components";
 import { getRangeOptions, useSalesReport } from "./hooks";
-import { getUILanguage, setUILanguage, t, type UILanguage } from "./i18n";
-import { useState } from "react";
+import { t } from "./i18n";
 
 export function App() {
-  const [language, setLanguage] = useState<UILanguage>(getUILanguage());
-
   const {
     form,
     identity,
@@ -52,17 +41,6 @@ export function App() {
     document.title = "Jangbu Client";
   }, []);
 
-  function handleLanguageChange(
-    _event: React.MouseEvent<HTMLElement>,
-    nextLanguage: UILanguage | null,
-  ) {
-    if (!nextLanguage || nextLanguage === language) {
-      return;
-    }
-    setUILanguage(nextLanguage);
-    setLanguage(nextLanguage);
-  }
-
   return (
     <AppLayout>
       {!identity ? (
@@ -78,41 +56,36 @@ export function App() {
         />
       ) : (
         <Stack spacing={1}>
-          <Card>
-            <CardContent
-              sx={{ py: 1.25, px: 1.5, "&:last-child": { pb: 1.25 } }}
+          <Box
+            sx={{
+              px: 0.5,
+              py: 0.25,
+            }}
+          >
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "40px 1fr 40px",
+                alignItems: "center",
+              }}
             >
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                alignItems={{ xs: "flex-start", sm: "center" }}
-                justifyContent="space-between"
-                spacing={1}
+              <IconButton
+                size="small"
+                onClick={handleIdentityReset}
+                aria-label={t("app.switchAccount")}
+                sx={{ width: 36, height: 36 }}
               >
-                <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                  {t("app.salesReport")}
-                </Typography>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <ToggleButtonGroup
-                    size="small"
-                    value={language}
-                    exclusive
-                    onChange={handleLanguageChange}
-                    aria-label={t("app.language")}
-                  >
-                    <ToggleButton value="en" aria-label={t("app.langEnglish")}>
-                      EN
-                    </ToggleButton>
-                    <ToggleButton value="ko" aria-label={t("app.langKorean")}>
-                      KO
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                  <Button variant="outlined" onClick={handleIdentityReset}>
-                    {t("app.switchAccount")}
-                  </Button>
-                </Stack>
-              </Stack>
-            </CardContent>
-          </Card>
+                <ArrowBackRoundedIcon />
+              </IconButton>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: 700, textAlign: "center" }}
+              >
+                {t("app.salesReport")}
+              </Typography>
+              <Box sx={{ width: 36, height: 36 }} />
+            </Box>
+          </Box>
 
           <DateFilterCard
             selectedFromDate={activeRange.from.slice(0, 10)}

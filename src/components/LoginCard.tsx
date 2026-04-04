@@ -36,7 +36,6 @@ export function LoginCard({
         mx: "auto",
         mt: { xs: 3, sm: 6 },
         borderRadius: 4,
-        boxShadow: 6,
       }}
     >
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>

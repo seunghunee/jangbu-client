@@ -23,6 +23,45 @@ let theme = createTheme({
   },
   typography: {
     fontFamily: '"Pretendard Variable", "Noto Sans KR", "Segoe UI", sans-serif',
+    h5: {
+      fontSize: "1.45rem",
+      fontWeight: 700,
+      lineHeight: 1.22,
+      letterSpacing: "-0.02em",
+      "@media (max-width:600px)": {
+        fontSize: "1.28rem",
+      },
+    },
+    h6: {
+      fontSize: "1.18rem",
+      fontWeight: 700,
+      lineHeight: 1.22,
+      letterSpacing: "-0.01em",
+      "@media (max-width:600px)": {
+        fontSize: "1.06rem",
+      },
+    },
+    subtitle1: {
+      fontSize: "1.06rem",
+      lineHeight: 1.3,
+      "@media (max-width:600px)": {
+        fontSize: "0.98rem",
+      },
+    },
+    body1: {
+      fontSize: "0.97rem",
+      lineHeight: 1.45,
+      "@media (max-width:600px)": {
+        fontSize: "0.92rem",
+      },
+    },
+    body2: {
+      fontSize: "0.9rem",
+      lineHeight: 1.4,
+      "@media (max-width:600px)": {
+        fontSize: "0.84rem",
+      },
+    },
     h1: {
       fontWeight: 700,
       letterSpacing: "-0.02em",
@@ -60,11 +99,15 @@ let theme = createTheme({
       },
     },
     MuiCard: {
+      defaultProps: {
+        elevation: 0,
+      },
       styleOverrides: {
         root: ({ theme }) => ({
           borderRadius: 20,
           border: `1px solid ${alpha(theme.palette.text.primary, 0.08)}`,
           backgroundImage: "none",
+          boxShadow: "none",
         }),
       },
     },
