@@ -106,11 +106,15 @@ export function DateFilterCard({
                 </Typography>
                 <Typography
                   component="span"
+                  noWrap
                   sx={{
                     fontSize: { xs: "1.08rem", sm: "1.14rem" },
                     fontWeight: 700,
                     lineHeight: 1.2,
                     letterSpacing: "-0.01em",
+                    maxWidth: "100%",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                   }}
                 >
                   {selectedDateLabel}

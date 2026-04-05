@@ -49,6 +49,23 @@ export function formatDateTimeLabel(value: string): string {
   }).format(new Date(value));
 }
 
+export function formatDateRangeLabel(
+  fromValue: string,
+  toValue: string,
+): string {
+  const formatter = new Intl.DateTimeFormat(getUILocale(), {
+    dateStyle: "medium",
+  });
+  const fromDate = new Date(fromValue);
+  const toDate = new Date(toValue);
+
+  if (typeof formatter.formatRange === "function") {
+    return formatter.formatRange(fromDate, toDate);
+  }
+
+  return `${formatter.format(fromDate)} - ${formatter.format(toDate)}`;
+}
+
 export function toOffsetDateTime(localDateTime: string): string {
   const date = new Date(localDateTime);
   if (Number.isNaN(date.getTime())) {

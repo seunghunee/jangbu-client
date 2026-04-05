@@ -5,7 +5,12 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { formatDateTimeLabel, formatInteger, formatKrw } from "./format";
+import {
+  formatDateRangeLabel,
+  formatDateTimeLabel,
+  formatInteger,
+  formatKrw,
+} from "./format";
 import {
   AppLayout,
   DateFilterCard,
@@ -39,7 +44,7 @@ export function App() {
   const selectedDateLabel =
     form.rangeDays === 1
       ? formatDateTimeLabel(activeRange.to)
-      : `${formatDateTimeLabel(activeRange.from)} - ${formatDateTimeLabel(activeRange.to)}`;
+      : formatDateRangeLabel(activeRange.from, activeRange.to);
 
   useEffect(() => {
     document.title = "Jangbu Client";
