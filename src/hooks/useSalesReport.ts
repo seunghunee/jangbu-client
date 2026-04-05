@@ -72,6 +72,15 @@ function shiftDateValue(dateValue: string, deltaDays: number): string {
   return toDateTimeLocalValue(date).slice(0, 10);
 }
 
+function getTodayDateValue(): string {
+  return toDateTimeLocalValue(new Date()).slice(0, 10);
+}
+
+function clampDateValueToToday(dateValue: string): string {
+  const today = getTodayDateValue();
+  return dateValue > today ? today : dateValue;
+}
+
 function getInclusiveDayDistance(fromDate: string, toDate: string): number {
   const from = new Date(`${fromDate}T00:00:00`);
   const to = new Date(`${toDate}T00:00:00`);
@@ -80,6 +89,8 @@ function getInclusiveDayDistance(fromDate: string, toDate: string): number {
 }
 
 function getRequestDateRange(form: FormState): { from: string; to: string } {
+  const todayEnd = new Date(`${getTodayDateValue()}T23:59:59`);
+
   if (form.rangePreset === "week") {
     const selected = new Date(`${form.selectedDate}T00:00:00`);
     const day = selected.getDay();
@@ -92,10 +103,11 @@ function getRequestDateRange(form: FormState): { from: string; to: string } {
     const to = new Date(from);
     to.setDate(from.getDate() + 6);
     to.setHours(23, 59, 59, 0);
+    const clampedTo = to > todayEnd ? todayEnd : to;
 
     return {
       from: toDateTimeLocalValue(from),
-      to: toDateTimeLocalValue(to),
+      to: toDateTimeLocalValue(clampedTo),
     };
   }
 
@@ -119,10 +131,11 @@ function getRequestDateRange(form: FormState): { from: string; to: string } {
       59,
       0,
     );
+    const clampedTo = to > todayEnd ? todayEnd : to;
 
     return {
       from: toDateTimeLocalValue(from),
-      to: toDateTimeLocalValue(to),
+      to: toDateTimeLocalValue(clampedTo),
     };
   }
 
@@ -130,10 +143,11 @@ function getRequestDateRange(form: FormState): { from: string; to: string } {
     const selected = new Date(`${form.selectedDate}T00:00:00`);
     const from = new Date(selected.getFullYear(), 0, 1, 0, 0, 0, 0);
     const to = new Date(selected.getFullYear(), 11, 31, 23, 59, 59, 0);
+    const clampedTo = to > todayEnd ? todayEnd : to;
 
     return {
       from: toDateTimeLocalValue(from),
-      to: toDateTimeLocalValue(to),
+      to: toDateTimeLocalValue(clampedTo),
     };
   }
 
@@ -180,12 +194,15 @@ export function useSalesReport() {
     : [];
 
   function setSelectedDate(value: string) {
-    setForm((current) => ({ ...current, selectedDate: value }));
+    setForm((current) => ({
+      ...current,
+      selectedDate: clampDateValueToToday(value),
+    }));
   }
 
   function setSelectedRange(fromDate: string, toDate: string) {
     const from = fromDate <= toDate ? fromDate : toDate;
-    const to = fromDate <= toDate ? toDate : fromDate;
+    const to = clampDateValueToToday(fromDate <= toDate ? toDate : fromDate);
     const rangeDays = Math.max(1, getInclusiveDayDistance(from, to));
     setForm((current) => ({
       ...current,
@@ -225,7 +242,7 @@ export function useSalesReport() {
   }
 
   function applyQuickRange(days: number) {
-    const today = toDateTimeLocalValue(new Date()).slice(0, 10);
+    const today = getTodayDateValue();
     const rangePreset: FormState["rangePreset"] =
       days === 7
         ? "week"
@@ -246,7 +263,7 @@ export function useSalesReport() {
   function shiftSelectedDate(step: number) {
     setForm((current) => ({
       ...current,
-      selectedDate:
+      selectedDate: clampDateValueToToday(
         current.rangePreset === "week"
           ? shiftDateValue(current.selectedDate, step * 7)
           : current.rangePreset === "month"
@@ -262,6 +279,7 @@ export function useSalesReport() {
                   return toDateTimeLocalValue(date).slice(0, 10);
                 })()
               : shiftDateValue(current.selectedDate, step * current.rangeDays),
+      ),
     }));
   }
 

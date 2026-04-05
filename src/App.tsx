@@ -41,6 +41,9 @@ export function App() {
   } = useSalesReport();
 
   const rangeOptions = getRangeOptions();
+  const now = new Date();
+  const todayDateValue = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const disableForwardShift = activeRange.to.slice(0, 10) >= todayDateValue;
   const selectedDateLabel =
     form.rangeDays === 1
       ? formatDateTimeLabel(activeRange.to)
@@ -106,6 +109,7 @@ export function App() {
               selectedDateLabel={selectedDateLabel}
               rangeDays={form.rangeDays}
               isLoading={isLoading}
+              disableForwardShift={disableForwardShift}
               rangeOptions={rangeOptions}
               onShiftDate={(delta) => {
                 shiftSelectedDate(delta);

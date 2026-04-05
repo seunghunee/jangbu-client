@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dayjs, { type Dayjs } from "dayjs";
 import { Dialog, DialogContent } from "@mui/material";
 import { alpha } from "@mui/material/styles";
@@ -29,17 +29,35 @@ export function LazyDatePickerDialog({
   const [draftFrom, setDraftFrom] = useState<Dayjs | null>(null);
   const [draftTo, setDraftTo] = useState<Dayjs | null>(null);
   const [hoveredDay, setHoveredDay] = useState<Dayjs | null>(null);
+  const [visibleMonth, setVisibleMonth] = useState<Dayjs | null>(null);
+  const today = useMemo(() => dayjs().startOf("day"), []);
+
+  function clampToToday(value: Dayjs | null): Dayjs | null {
+    if (!value || !value.isValid()) {
+      return null;
+    }
+    return value.isAfter(today, "day") ? today : value;
+  }
 
   useEffect(() => {
     if (!open) {
       return;
     }
-    setDraftFrom(dayjs(selectedFromDate));
-    setDraftTo(dayjs(selectedToDate));
-    setHoveredDay(null);
-  }, [open, selectedFromDate, selectedToDate]);
+    const clampedFrom = clampToToday(dayjs(selectedFromDate));
+    const clampedTo = clampToToday(dayjs(selectedToDate));
 
-  const calendarValue = draftTo ?? draftFrom;
+    setDraftFrom(clampedFrom);
+    setDraftTo(clampedTo);
+    setVisibleMonth((clampedTo ?? clampedFrom ?? today).startOf("month"));
+    setHoveredDay(null);
+  }, [open, selectedFromDate, selectedToDate, today]);
+
+  const monthAnchor = visibleMonth ?? today;
+  const calendarValue =
+    draftTo ??
+    (draftFrom && draftFrom.isSame(monthAnchor, "month")
+      ? draftFrom
+      : monthAnchor);
 
   const previewEnd =
     draftFrom &&
@@ -51,6 +69,10 @@ export function LazyDatePickerDialog({
 
   function handleSelectDate(value: Dayjs | null) {
     if (!value || !value.isValid()) {
+      return;
+    }
+
+    if (value.isAfter(today, "day")) {
       return;
     }
 
@@ -102,6 +124,10 @@ export function LazyDatePickerDialog({
           <DateCalendar
             value={calendarValue}
             onChange={handleSelectDate}
+            onMonthChange={(month) => {
+              setVisibleMonth(month.startOf("month"));
+            }}
+            maxDate={today}
             showDaysOutsideCurrentMonth
             sx={{
               px: 1,
@@ -120,6 +146,9 @@ export function LazyDatePickerDialog({
             slotProps={{
               day: (ownerState) => {
                 const day = ownerState.day as Dayjs;
+                const isDisabled = Boolean(
+                  (ownerState as { disabled?: boolean }).disabled,
+                );
                 const isOutsideMonth = Boolean(
                   (ownerState as { outsideCurrentMonth?: boolean })
                     .outsideCurrentMonth ??
@@ -158,11 +187,13 @@ export function LazyDatePickerDialog({
                   sx: {
                     borderRadius: 0,
                     mx: 0,
-                    ...(!isOutsideMonth && {
-                      color: "text.primary",
-                      opacity: 1,
-                    }),
+                    ...(!isOutsideMonth &&
+                      !isDisabled && {
+                        color: "text.primary",
+                        opacity: 1,
+                      }),
                     ...(isOutsideMonth &&
+                      !isDisabled &&
                       !isStart &&
                       !isEnd && {
                         color: "text.disabled",

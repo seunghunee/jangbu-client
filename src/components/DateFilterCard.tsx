@@ -26,6 +26,7 @@ type DateFilterCardProps = {
   selectedDateLabel: string;
   rangeDays: number;
   isLoading: boolean;
+  disableForwardShift: boolean;
   rangeOptions: ReadonlyArray<{ label: string; days: number }>;
   onShiftDate: (delta: number) => void;
   onSelectedRangeChange: (fromDate: string, toDate: string) => void;
@@ -38,6 +39,7 @@ export function DateFilterCard({
   selectedDateLabel,
   rangeDays,
   isLoading,
+  disableForwardShift,
   rangeOptions,
   onShiftDate,
   onSelectedRangeChange,
@@ -106,15 +108,11 @@ export function DateFilterCard({
                 </Typography>
                 <Typography
                   component="span"
-                  noWrap
                   sx={{
                     fontSize: { xs: "1.08rem", sm: "1.14rem" },
                     fontWeight: 700,
                     lineHeight: 1.2,
                     letterSpacing: "-0.01em",
-                    maxWidth: "100%",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
                   }}
                 >
                   {selectedDateLabel}
@@ -123,7 +121,7 @@ export function DateFilterCard({
               <IconButton
                 size="small"
                 onClick={() => onShiftDate(1)}
-                disabled={isLoading}
+                disabled={isLoading || disableForwardShift}
                 aria-label={t("date.nextDay")}
                 sx={{ width: 38, height: 38, color: "primary.main" }}
               >
