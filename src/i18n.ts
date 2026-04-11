@@ -27,7 +27,9 @@ function detectSystemLanguage(): UILanguage {
 let currentLanguage: UILanguage = detectSystemLanguage();
 
 type MessageKey =
+  | "app.home"
   | "app.salesReport"
+  | "app.buyerMix"
   | "app.switchAccount"
   | "app.language"
   | "app.langEnglish"
@@ -67,9 +69,34 @@ type MessageKey =
   | "product.variants"
   | "footer.home"
   | "footer.sales"
+  | "footer.buyerMix"
   | "footer.inventory"
   | "footer.settings"
+  | "buyerMix.changeVsPrevious"
+  | "buyerMix.previousPeriod"
+  | "buyerMix.payoutRate"
+  | "buyerMix.shareOfPayout"
+  | "buyerMix.buyerTypeBreakdown"
+  | "buyerMix.buyerType"
+  | "buyerMix.topProductsByPayout"
+  | "buyerMix.mockDataNote"
+  | "buyerMix.bestPayoutQuality"
+  | "buyerMix.largestFundDrag"
+  | "buyerMix.buyersHeading"
+  | "buyerMix.allTypes"
+  | "buyerMix.purchasedItems"
+  | "buyerMix.fundShort"
+  | "home.mockDataNote"
+  | "home.periodChange"
+  | "home.topProductByPayout"
+  | "home.highestFundImpactType"
+  | "buyerType.retailer"
+  | "buyerType.unregisteredIndividual"
+  | "buyerType.unregisteredInstitution"
+  | "buyerType.producer"
+  | "buyerType.staff"
   | "table.variant"
+  | "table.item"
   | "table.sold"
   | "table.grossSales"
   | "table.fundTotal"
@@ -79,7 +106,9 @@ type MessageKey =
 
 const messages: Record<UILanguage, Record<MessageKey, string>> = {
   en: {
+    "app.home": "Home overview",
     "app.salesReport": "Sales report",
+    "app.buyerMix": "Buyer sales",
     "app.switchAccount": "Switch account",
     "app.language": "Language",
     "app.langEnglish": "English",
@@ -119,9 +148,34 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "product.variants": "Variants",
     "footer.home": "Home",
     "footer.sales": "Sales",
+    "footer.buyerMix": "Buyers",
     "footer.inventory": "Inventory",
     "footer.settings": "Settings",
+    "buyerMix.changeVsPrevious": "vs previous",
+    "buyerMix.previousPeriod": "Previous period",
+    "buyerMix.payoutRate": "Payout rate",
+    "buyerMix.shareOfPayout": "Payout share",
+    "buyerMix.buyerTypeBreakdown": "Buyer type breakdown",
+    "buyerMix.buyerType": "Buyer type",
+    "buyerMix.topProductsByPayout": "Top products by payout",
+    "buyerMix.mockDataNote": "Buyer sales preview data for UX validation",
+    "buyerMix.bestPayoutQuality": "Best payout quality",
+    "buyerMix.largestFundDrag": "Largest fund drag",
+    "buyerMix.buyersHeading": "Buyers",
+    "buyerMix.allTypes": "All types",
+    "buyerMix.purchasedItems": "Purchased items",
+    "buyerMix.fundShort": "Fund",
+    "home.mockDataNote": "Home uses preview data for UX validation",
+    "home.periodChange": "Payout change vs previous",
+    "home.topProductByPayout": "Top product by payout",
+    "home.highestFundImpactType": "Highest fund impact type",
+    "buyerType.retailer": "Retailer",
+    "buyerType.unregisteredIndividual": "Unregistered individual",
+    "buyerType.unregisteredInstitution": "Unregistered institution",
+    "buyerType.producer": "Producer",
+    "buyerType.staff": "Staff",
     "table.variant": "Variant",
+    "table.item": "Item",
     "table.sold": "Sold",
     "table.grossSales": "Gross sales",
     "table.fundTotal": "Fund total",
@@ -130,7 +184,9 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "error.identityRequired": "Store ID and Producer ID are required.",
   },
   ko: {
+    "app.home": "홈 요약",
     "app.salesReport": "매출 내역 조회",
+    "app.buyerMix": "구매자 매출",
     "app.switchAccount": "계정 변경",
     "app.language": "언어",
     "app.langEnglish": "영어",
@@ -170,9 +226,34 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "product.variants": "옵션 수",
     "footer.home": "홈",
     "footer.sales": "매출조회",
+    "footer.buyerMix": "구매자",
     "footer.inventory": "재고관리",
     "footer.settings": "설정",
+    "buyerMix.changeVsPrevious": "전 기간 대비",
+    "buyerMix.previousPeriod": "이전 기간",
+    "buyerMix.payoutRate": "정산 비율",
+    "buyerMix.shareOfPayout": "정산 기여도",
+    "buyerMix.buyerTypeBreakdown": "구매자 유형별",
+    "buyerMix.buyerType": "구매자 유형",
+    "buyerMix.topProductsByPayout": "정산 금액 상위 품목",
+    "buyerMix.mockDataNote": "구매자 매출 화면 검증용 예시 데이터",
+    "buyerMix.bestPayoutQuality": "정산 효율이 높은 유형",
+    "buyerMix.largestFundDrag": "펀드 부담이 큰 유형",
+    "buyerMix.buyersHeading": "구매자 목록",
+    "buyerMix.allTypes": "전체 유형",
+    "buyerMix.purchasedItems": "구매 품목",
+    "buyerMix.fundShort": "펀드",
+    "home.mockDataNote": "홈 화면은 검증용 예시 데이터를 사용합니다",
+    "home.periodChange": "이전 기간 대비 정산 변화",
+    "home.topProductByPayout": "정산 금액 상위 품목",
+    "home.highestFundImpactType": "펀드 영향이 큰 유형",
+    "buyerType.retailer": "소매",
+    "buyerType.unregisteredIndividual": "미등록 개인",
+    "buyerType.unregisteredInstitution": "미등록 기관",
+    "buyerType.producer": "생산자",
+    "buyerType.staff": "직원",
     "table.variant": "옵션",
+    "table.item": "품목",
     "table.sold": "판매",
     "table.grossSales": "총 매출",
     "table.fundTotal": "펀드 합계",

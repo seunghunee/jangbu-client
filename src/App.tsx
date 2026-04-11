@@ -1,11 +1,19 @@
-import { useEffect } from "react";
-import { Alert, Box, IconButton, Stack, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Alert,
+  Box,
+  ButtonBase,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import {
+  formatPercent,
   formatDateRangeLabel,
   formatDateTimeLabel,
   formatInteger,
@@ -13,15 +21,54 @@ import {
 } from "./format";
 import {
   AppLayout,
+  BuyerSalesList,
   DateFilterCard,
+  HomeOverview,
   LoginCard,
   ProductSalesList,
   ReportStats,
 } from "./components";
 import { getRangeOptions, useSalesReport } from "./hooks";
 import { t } from "./i18n";
+import { buildMockBuyerMixReport } from "./mockBuyerMix";
+
+type ActivePage = "home" | "sales" | "buyerMix";
+
+type FooterNavItemProps = {
+  active: boolean;
+  label: string;
+  onClick: () => void;
+  icon: React.ReactNode;
+};
+
+function FooterNavItem({ active, label, onClick, icon }: FooterNavItemProps) {
+  return (
+    <ButtonBase
+      onClick={onClick}
+      sx={{
+        flex: 1,
+        py: 0.25,
+        px: 0.4,
+        borderRadius: 1,
+        color: active ? "primary.main" : "text.secondary",
+      }}
+      aria-label={label}
+    >
+      <Stack spacing={0.2} alignItems="center" sx={{ width: "100%" }}>
+        {icon}
+        <Typography
+          variant="caption"
+          sx={{ fontSize: "0.7rem", fontWeight: active ? 700 : 500 }}
+        >
+          {label}
+        </Typography>
+      </Stack>
+    </ButtonBase>
+  );
+}
 
 export function App() {
+  const [activePage, setActivePage] = useState<ActivePage>("home");
   const {
     form,
     identity,
@@ -48,10 +95,43 @@ export function App() {
     form.rangeDays === 1
       ? formatDateTimeLabel(activeRange.to)
       : formatDateRangeLabel(activeRange.from, activeRange.to);
+  const buyerMixReport = useMemo(
+    () => buildMockBuyerMixReport(activeRange.from, activeRange.to),
+    [activeRange.from, activeRange.to],
+  );
+  const topProductByPayout = buyerMixReport.topProductsByPayout[0] ?? null;
+  const highestFundImpactType =
+    [...buyerMixReport.buyerTypes].sort(
+      (left, right) => right.fundTotalKrw - left.fundTotalKrw,
+    )[0] ?? null;
+
+  function toBuyerTypeLabel(type: string): string {
+    switch (type) {
+      case "retailer":
+        return t("buyerType.retailer");
+      case "unregistered_individual":
+        return t("buyerType.unregisteredIndividual");
+      case "unregistered_institution":
+        return t("buyerType.unregisteredInstitution");
+      case "producer":
+        return t("buyerType.producer");
+      case "staff":
+        return t("buyerType.staff");
+      default:
+        return type;
+    }
+  }
 
   useEffect(() => {
-    document.title = "Jangbu Client";
-  }, []);
+    if (activePage === "home") {
+      document.title = `Jangbu Client - ${t("app.home")}`;
+      return;
+    }
+    document.title =
+      activePage === "sales"
+        ? `Jangbu Client - ${t("app.salesReport")}`
+        : `Jangbu Client - ${t("app.buyerMix")}`;
+  }, [activePage]);
 
   return (
     <AppLayout>
@@ -97,7 +177,11 @@ export function App() {
                   variant="h5"
                   sx={{ fontWeight: 700, textAlign: "center" }}
                 >
-                  {t("app.salesReport")}
+                  {activePage === "sales"
+                    ? t("app.salesReport")
+                    : activePage === "buyerMix"
+                      ? t("app.buyerMix")
+                      : t("app.home")}
                 </Typography>
                 <Box sx={{ width: 36, height: 36 }} />
               </Box>
@@ -120,13 +204,13 @@ export function App() {
           </Stack>
         )}
 
-        {errorMessage ? (
+        {activePage === "sales" && errorMessage ? (
           <Alert severity="error" sx={{ mt: 1 }}>
             {errorMessage}
           </Alert>
         ) : null}
 
-        {report && totals ? (
+        {activePage === "sales" && report && totals ? (
           <Stack spacing={1} sx={{ mt: 1 }}>
             <ReportStats
               totals={totals}
@@ -136,6 +220,37 @@ export function App() {
 
             <ProductSalesList
               products={sortedProducts}
+              formatInteger={formatInteger}
+              formatKrw={formatKrw}
+            />
+          </Stack>
+        ) : null}
+
+        {activePage === "home" && identity ? (
+          <>
+            <Alert severity="info" sx={{ mt: 1 }}>
+              {t("home.mockDataNote")}
+            </Alert>
+            <HomeOverview
+              summary={buyerMixReport.summary}
+              comparison={buyerMixReport.comparison}
+              topProduct={topProductByPayout}
+              highestFundImpactType={highestFundImpactType}
+              formatKrw={formatKrw}
+              formatPercent={formatPercent}
+              buyerTypeLabel={toBuyerTypeLabel}
+            />
+          </>
+        ) : null}
+
+        {activePage === "buyerMix" && identity ? (
+          <Stack spacing={1} sx={{ mt: 1 }}>
+            <Alert severity="info" sx={{ mt: 0 }}>
+              {t("buyerMix.mockDataNote")}
+            </Alert>
+            <BuyerSalesList
+              buyers={buyerMixReport.buyers}
+              buyerTypeLabel={toBuyerTypeLabel}
               formatInteger={formatInteger}
               formatKrw={formatKrw}
             />
@@ -165,49 +280,36 @@ export function App() {
               alignItems="center"
               justifyContent="space-between"
             >
-              <Stack
-                spacing={0.2}
-                alignItems="center"
-                sx={{ flex: 1, color: "text.secondary" }}
-              >
-                <HomeOutlinedIcon fontSize="small" />
-                <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
-                  {t("footer.home")}
-                </Typography>
-              </Stack>
-              <Stack
-                spacing={0.2}
-                alignItems="center"
-                sx={{ flex: 1, color: "primary.main" }}
-              >
-                <BarChartRoundedIcon fontSize="small" />
-                <Typography
-                  variant="caption"
-                  sx={{ fontSize: "0.7rem", fontWeight: 700 }}
-                >
-                  {t("footer.sales")}
-                </Typography>
-              </Stack>
-              <Stack
-                spacing={0.2}
-                alignItems="center"
-                sx={{ flex: 1, color: "text.secondary" }}
-              >
-                <Inventory2OutlinedIcon fontSize="small" />
-                <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
-                  {t("footer.inventory")}
-                </Typography>
-              </Stack>
-              <Stack
-                spacing={0.2}
-                alignItems="center"
-                sx={{ flex: 1, color: "text.secondary" }}
-              >
-                <SettingsOutlinedIcon fontSize="small" />
-                <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
-                  {t("footer.settings")}
-                </Typography>
-              </Stack>
+              <FooterNavItem
+                active={activePage === "home"}
+                label={t("footer.home")}
+                onClick={() => {
+                  setActivePage("home");
+                }}
+                icon={<HomeOutlinedIcon fontSize="small" />}
+              />
+              <FooterNavItem
+                active={activePage === "sales"}
+                label={t("footer.sales")}
+                onClick={() => {
+                  setActivePage("sales");
+                }}
+                icon={<BarChartRoundedIcon fontSize="small" />}
+              />
+              <FooterNavItem
+                active={activePage === "buyerMix"}
+                label={t("footer.buyerMix")}
+                onClick={() => {
+                  setActivePage("buyerMix");
+                }}
+                icon={<Inventory2OutlinedIcon fontSize="small" />}
+              />
+              <FooterNavItem
+                active={false}
+                label={t("footer.settings")}
+                onClick={() => undefined}
+                icon={<SettingsOutlinedIcon fontSize="small" />}
+              />
             </Stack>
           </Box>
         </Box>

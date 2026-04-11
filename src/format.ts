@@ -34,6 +34,10 @@ export function formatInteger(value: number): string {
   return getIntegerFormatter(getUILocale()).format(value);
 }
 
+export function formatPercent(value: number): string {
+  return `${formatInteger(Math.round(value * 10) / 10)}%`;
+}
+
 export function formatDateTimeRangeValue(date: Date): string {
   const year = String(date.getFullYear());
   const month = String(date.getMonth() + 1).padStart(2, "0");
