@@ -86,6 +86,9 @@ type MessageKey =
   | "buyerMix.allTypes"
   | "buyerMix.purchasedItems"
   | "buyerMix.fundShort"
+  | "buyerMix.fundDeduction"
+  | "buyerMix.totalNetSales"
+  | "buyerMix.itemizedBreakdown"
   | "home.mockDataNote"
   | "home.periodChange"
   | "home.topProductByPayout"
@@ -165,6 +168,9 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "buyerMix.allTypes": "All types",
     "buyerMix.purchasedItems": "Purchased items",
     "buyerMix.fundShort": "Fund",
+    "buyerMix.fundDeduction": "Fund total (deduction)",
+    "buyerMix.totalNetSales": "Total net sales",
+    "buyerMix.itemizedBreakdown": "Itemized breakdown",
     "home.mockDataNote": "Home uses preview data for UX validation",
     "home.periodChange": "Payout change vs previous",
     "home.topProductByPayout": "Top product by payout",
@@ -243,6 +249,9 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "buyerMix.allTypes": "전체 유형",
     "buyerMix.purchasedItems": "구매 품목",
     "buyerMix.fundShort": "펀드",
+    "buyerMix.fundDeduction": "펀드 합계 (차감)",
+    "buyerMix.totalNetSales": "총 정산 금액",
+    "buyerMix.itemizedBreakdown": "품목별 내역",
     "home.mockDataNote": "홈 화면은 검증용 예시 데이터를 사용합니다",
     "home.periodChange": "이전 기간 대비 정산 변화",
     "home.topProductByPayout": "정산 금액 상위 품목",
