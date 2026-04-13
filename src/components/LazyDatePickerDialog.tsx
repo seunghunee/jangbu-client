@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import dayjs, { type Dayjs } from "dayjs";
-import { Dialog, DialogContent } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import { Dialog, DialogContent, Box, Button, Typography } from "@mui/material";
 import {
   DateCalendar,
   LocalizationProvider,
   PickersDay,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { t, getUILocale } from "../i18n";
 
 type LazyDatePickerDialogProps = {
   open: boolean;
@@ -33,19 +33,14 @@ export function LazyDatePickerDialog({
   const today = useMemo(() => dayjs().startOf("day"), []);
 
   function clampToToday(value: Dayjs | null): Dayjs | null {
-    if (!value || !value.isValid()) {
-      return null;
-    }
+    if (!value || !value.isValid()) return null;
     return value.isAfter(today, "day") ? today : value;
   }
 
   useEffect(() => {
-    if (!open) {
-      return;
-    }
+    if (!open) return;
     const clampedFrom = clampToToday(dayjs(selectedFromDate));
     const clampedTo = clampToToday(dayjs(selectedToDate));
-
     setDraftFrom(clampedFrom);
     setDraftTo(clampedTo);
     setVisibleMonth((clampedTo ?? clampedFrom ?? today).startOf("month"));
@@ -68,13 +63,8 @@ export function LazyDatePickerDialog({
       : draftTo;
 
   function handleSelectDate(value: Dayjs | null) {
-    if (!value || !value.isValid()) {
-      return;
-    }
-
-    if (value.isAfter(today, "day")) {
-      return;
-    }
+    if (!value || !value.isValid()) return;
+    if (value.isAfter(today, "day")) return;
 
     if (!draftFrom || draftTo) {
       setDraftFrom(value);
@@ -91,8 +81,21 @@ export function LazyDatePickerDialog({
     }
 
     setDraftTo(value);
-    onSelectRange(draftFrom.format("YYYY-MM-DD"), value.format("YYYY-MM-DD"));
   }
+
+  const pillFormatter = useMemo(() => {
+    try {
+      return new Intl.DateTimeFormat(getUILocale(), {
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return new Intl.DateTimeFormat(undefined as any, {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  }, [adapterLocale]);
 
   return (
     <LocalizationProvider
@@ -103,156 +106,135 @@ export function LazyDatePickerDialog({
         open={open}
         onClose={onClose}
         maxWidth={false}
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            border: "1px solid",
-            borderColor: "divider",
-            width: 340,
-            maxWidth: "calc(100vw - 16px)",
-            overflow: "hidden",
-            m: 1,
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 1,
+              border: "1px solid",
+              borderColor: "divider",
+              width: 340,
+              maxWidth: "calc(100vw - 16px)",
+              overflow: "hidden",
+              m: 1,
+            },
           },
         }}
       >
-        <DialogContent
-          sx={{
-            p: 0,
-            "&:last-child": { pb: 0 },
-          }}
-        >
+        <DialogContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
           <DateCalendar
             value={calendarValue}
-            onChange={handleSelectDate}
-            onMonthChange={(month) => {
-              setVisibleMonth(month.startOf("month"));
-            }}
+            onChange={(v) => handleSelectDate(v as Dayjs | null)}
+            onMonthChange={(month: Dayjs) =>
+              setVisibleMonth(month.startOf("month"))
+            }
             maxDate={today}
             showDaysOutsideCurrentMonth
-            sx={{
-              px: 1,
-              "& .MuiDayCalendar-weekContainer": {
-                gap: 0,
-              },
-              "& .MuiPickersDay-root": {
-                margin: 0,
-              },
-              "& .MuiPickersDay-root.MuiPickersDay-dayOutsideMonth": {
-                color: "text.disabled",
-                opacity: 0.58,
-              },
-            }}
             slots={{ day: PickersDay }}
             slotProps={{
-              day: (ownerState) => {
-                const day = ownerState.day as Dayjs;
-                const isDisabled = Boolean(
-                  (ownerState as { disabled?: boolean }).disabled,
-                );
-                const isOutsideMonth = Boolean(
-                  (ownerState as { outsideCurrentMonth?: boolean })
-                    .outsideCurrentMonth ??
-                  (calendarValue
-                    ? day.month() !== calendarValue.month()
-                    : false),
-                );
-                const hasRange = Boolean(draftFrom && previewEnd);
-                const isStart = Boolean(
-                  draftFrom && day.isSame(draftFrom, "day"),
-                );
-                const isEnd = Boolean(
-                  previewEnd && day.isSame(previewEnd, "day"),
-                );
-                const isInRange = Boolean(
-                  hasRange &&
-                  draftFrom &&
-                  previewEnd &&
-                  (day.isAfter(draftFrom, "day") ||
-                    day.isSame(draftFrom, "day")) &&
-                  (day.isBefore(previewEnd, "day") ||
-                    day.isSame(previewEnd, "day")),
-                );
-
-                return {
-                  onMouseEnter: () => {
-                    if (draftFrom && !draftTo) {
-                      setHoveredDay(day);
-                    }
-                  },
-                  onFocus: () => {
-                    if (draftFrom && !draftTo) {
-                      setHoveredDay(day);
-                    }
-                  },
-                  sx: {
-                    borderRadius: 0,
-                    mx: 0,
-                    ...(!isOutsideMonth &&
-                      !isDisabled && {
-                        color: "text.primary",
-                        opacity: 1,
-                      }),
-                    ...(isOutsideMonth &&
-                      !isDisabled &&
-                      !isStart &&
-                      !isEnd && {
-                        color: "text.disabled",
-                        opacity: 0.7,
-                      }),
-                    ...(isInRange &&
-                      !isStart &&
-                      !isEnd && {
-                        backgroundColor: (theme) =>
-                          alpha(theme.palette.primary.main, 0.16),
-                      }),
-                    ...(isStart && {
-                      borderRadius: "50%",
-                      backgroundColor: "primary.main",
-                      color: "primary.contrastText",
-                      backgroundImage: !isEnd
-                        ? (theme) =>
-                            `linear-gradient(to right, transparent 50%, ${alpha(theme.palette.primary.main, 0.14)} 50%)`
-                        : undefined,
-                    }),
-                    ...(isEnd && {
-                      borderRadius: "50%",
-                      backgroundColor: "primary.main",
-                      color: "primary.contrastText",
-                      backgroundImage: !isStart
-                        ? (theme) =>
-                            `linear-gradient(to left, transparent 50%, ${alpha(theme.palette.primary.main, 0.14)} 50%)`
-                        : undefined,
-                    }),
-                    "&:hover": {
-                      ...(isInRange &&
-                        !isStart &&
-                        !isEnd && {
-                          backgroundColor: (theme) =>
-                            alpha(theme.palette.primary.main, 0.22),
-                        }),
-                      ...(isStart || isEnd
-                        ? {
-                            backgroundColor: "primary.dark",
-                            ...(isStart && !isEnd
-                              ? {
-                                  backgroundImage: (theme) =>
-                                    `linear-gradient(to right, transparent 50%, ${alpha(theme.palette.primary.main, 0.2)} 50%)`,
-                                }
-                              : {}),
-                            ...(isEnd && !isStart
-                              ? {
-                                  backgroundImage: (theme) =>
-                                    `linear-gradient(to left, transparent 50%, ${alpha(theme.palette.primary.main, 0.2)} 50%)`,
-                                }
-                              : {}),
-                          }
-                        : {}),
-                    },
-                  },
-                };
+              day: (ownerState: any) => {
+                try {
+                  const d = ownerState?.day as Dayjs | undefined;
+                  const isStart = !!(
+                    draftFrom &&
+                    d &&
+                    d.isSame &&
+                    d.isSame(draftFrom, "day")
+                  );
+                  return {
+                    sx: isStart
+                      ? {
+                          bgcolor: "primary.light",
+                          color: "primary.contrastText",
+                          borderRadius: "50%",
+                        }
+                      : undefined,
+                  };
+                } catch {
+                  return {};
+                }
               },
             }}
           />
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 1,
+              px: 2,
+              py: 1,
+              borderTop: 1,
+              borderColor: "divider",
+              backgroundColor: "background.paper",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  px: 1.25,
+                  py: 0.5,
+                  borderRadius: 2,
+                  bgcolor: draftFrom ? "primary.light" : "action.hover",
+                  color: draftFrom ? "primary.contrastText" : "text.secondary",
+                  minWidth: 70,
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="body2">
+                  {draftFrom
+                    ? pillFormatter.format(draftFrom.toDate())
+                    : t("date.start")}
+                </Typography>
+              </Box>
+
+              <Typography color="text.secondary">→</Typography>
+
+              <Box
+                sx={{
+                  px: 1.25,
+                  py: 0.5,
+                  borderRadius: 2,
+                  bgcolor:
+                    draftTo || previewEnd ? "primary.main" : "action.hover",
+                  color:
+                    draftTo || previewEnd
+                      ? "primary.contrastText"
+                      : "text.secondary",
+                  minWidth: 70,
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="body2">
+                  {draftTo
+                    ? pillFormatter.format(draftTo.toDate())
+                    : previewEnd && draftFrom
+                      ? pillFormatter.format(previewEnd.toDate())
+                      : t("date.end")}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                size="small"
+                variant="contained"
+                disabled={!(draftFrom && (draftTo || previewEnd))}
+                onClick={() => {
+                  const from = draftFrom;
+                  const to = (draftTo ?? previewEnd) as Dayjs | null;
+                  if (!from || !to) return;
+                  onSelectRange(
+                    from.format("YYYY-MM-DD"),
+                    to.format("YYYY-MM-DD"),
+                  );
+                  onClose();
+                }}
+              >
+                {t("date.apply")}
+              </Button>
+            </Box>
+          </Box>
         </DialogContent>
       </Dialog>
     </LocalizationProvider>

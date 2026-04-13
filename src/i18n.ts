@@ -44,6 +44,8 @@ type MessageKey =
   | "date.queryPeriod"
   | "date.prevDay"
   | "date.nextDay"
+  | "date.start"
+  | "date.end"
   | "date.pickDate"
   | "date.cancel"
   | "date.apply"
@@ -127,6 +129,8 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "date.prevDay": "Previous range",
     "date.nextDay": "Next range",
     "date.pickDate": "Pick date",
+    "date.start": "Start",
+    "date.end": "End",
     "date.cancel": "Cancel",
     "date.apply": "Apply",
     "date.loadSales": "Load sales",
@@ -208,6 +212,8 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "date.prevDay": "이전 기간",
     "date.nextDay": "다음 기간",
     "date.pickDate": "날짜 선택",
+    "date.start": "시작",
+    "date.end": "종료",
     "date.cancel": "취소",
     "date.apply": "적용",
     "date.loadSales": "매출 조회",
