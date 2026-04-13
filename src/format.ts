@@ -96,7 +96,15 @@ export function toOffsetDateTime(localDateTime: string): string {
 
 export function getDefaultDateRange(now: Date): { from: string; to: string } {
   const from = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-  const to = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 0, 0);
+  const to = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    0,
+    0,
+  );
   return {
     from: formatDateTimeRangeValue(from),
     to: formatDateTimeRangeValue(to),
