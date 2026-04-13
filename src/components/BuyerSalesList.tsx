@@ -340,14 +340,13 @@ export function BuyerSalesList({
                               color="text.secondary"
                               sx={{ mt: 0.15 }}
                             >
-                              {getVariantBaseName(item.productVariantName)} ·{" "}
                               {formatInteger(item.soldQty)} {t("table.sold")}
                             </Typography>
                           </Box>
                           <Typography
                             variant="body1"
                             sx={{
-                              color: "text.primary",
+                              color: "primary.main",
                               fontWeight: 700,
                               flexShrink: 0,
                             }}
