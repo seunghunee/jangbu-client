@@ -1,3 +1,5 @@
+import type { BuyerSalesResponse } from "./api";
+
 export type BuyerMixSummary = {
   soldQty: number;
   grossSalesKrw: number;
@@ -43,8 +45,8 @@ export type TopProductByPayout = {
 };
 
 export type BuyerPurchaseItem = {
-  id: string;
-  itemName: string;
+  productVariantId: string;
+  productVariantName: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -72,6 +74,8 @@ export type BuyerMixMockReport = {
   topProductsByPayout: TopProductByPayout[];
   buyers: BuyerSalesRow[];
 };
+
+export type BuyerMixReport = BuyerMixMockReport;
 
 function toIsoLocalDate(date: Date): string {
   const year = String(date.getFullYear());
@@ -206,6 +210,14 @@ function toBuyerTypeFundRate(type: string): number {
   }
 }
 
+function toProductName(productVariantName: string): string {
+  const trimmed = productVariantName.trim();
+  const normalized = trimmed
+    .replace(/\s+\d+(?:\.\d+)?(?:kg|g|ml|l|L|호)?$/i, "")
+    .trim();
+  return normalized || trimmed;
+}
+
 function deriveBuyers(summary: BuyerMixSummary): BuyerSalesRow[] {
   const buyerTemplates = [
     { id: "b01", name: "Green Mart", type: "retailer", weight: 0.17 },
@@ -261,8 +273,8 @@ function deriveBuyers(summary: BuyerMixSummary): BuyerSalesRow[] {
         const qty = Math.max(1, Math.round(soldQty * product.qtyWeight * 0.92));
         const fund = Math.round(gross * fundRate);
         return {
-          id: `${buyer.id}-i${itemIndex + 1}`,
-          itemName: product.name,
+          productVariantId: `${buyer.id}-v${itemIndex + 1}`,
+          productVariantName: `${product.name} ${itemIndex + 1}호`,
           soldQty: qty,
           grossSalesKrw: gross,
           fundTotalKrw: fund,
@@ -333,5 +345,169 @@ export function buildMockBuyerMixReport(
     buyerTypes: deriveBuyerTypes(currentSummary),
     topProductsByPayout: deriveTopProducts(currentSummary),
     buyers: deriveBuyers(currentSummary),
+  };
+}
+
+function sumBuyerSales(report: BuyerSalesResponse): BuyerMixSummary {
+  return report.buyers.reduce(
+    (totals, buyer) => {
+      totals.soldQty += buyer.soldQty;
+      totals.grossSalesKrw += buyer.grossSalesKrw;
+      totals.fundTotalKrw += buyer.fundTotalKrw;
+      totals.payoutAmountKrw += buyer.payoutAmountKrw;
+      return totals;
+    },
+    {
+      soldQty: 0,
+      grossSalesKrw: 0,
+      fundTotalKrw: 0,
+      payoutAmountKrw: 0,
+      payoutRate: 0,
+    },
+  );
+}
+
+function toBuyerMixSummary(report: BuyerSalesResponse): BuyerMixSummary {
+  const summary = sumBuyerSales(report);
+  summary.payoutRate =
+    summary.grossSalesKrw === 0
+      ? 0
+      : summary.payoutAmountKrw / summary.grossSalesKrw;
+  return summary;
+}
+
+function buildBuyerMixDelta(
+  currentSummary: BuyerMixSummary,
+  previousSummary: BuyerMixSummary,
+): BuyerMixDelta {
+  return {
+    soldQty: currentSummary.soldQty - previousSummary.soldQty,
+    grossSalesKrw: currentSummary.grossSalesKrw - previousSummary.grossSalesKrw,
+    fundTotalKrw: currentSummary.fundTotalKrw - previousSummary.fundTotalKrw,
+    payoutAmountKrw:
+      currentSummary.payoutAmountKrw - previousSummary.payoutAmountKrw,
+    payoutRate: currentSummary.payoutRate - previousSummary.payoutRate,
+    grossSalesPct:
+      previousSummary.grossSalesKrw === 0
+        ? 0
+        : ((currentSummary.grossSalesKrw - previousSummary.grossSalesKrw) /
+            previousSummary.grossSalesKrw) *
+          100,
+    payoutAmountPct:
+      previousSummary.payoutAmountKrw === 0
+        ? 0
+        : ((currentSummary.payoutAmountKrw - previousSummary.payoutAmountKrw) /
+            previousSummary.payoutAmountKrw) *
+          100,
+  };
+}
+
+function buildBuyerRows(report: BuyerSalesResponse): BuyerSalesRow[] {
+  return report.buyers
+    .map((buyer) => ({
+      buyerId: buyer.buyerId,
+      buyerName: buyer.buyerName,
+      buyerType: buyer.buyerType,
+      soldQty: buyer.soldQty,
+      grossSalesKrw: buyer.grossSalesKrw,
+      fundTotalKrw: buyer.fundTotalKrw,
+      payoutAmountKrw: buyer.payoutAmountKrw,
+      payoutRate:
+        buyer.grossSalesKrw === 0
+          ? 0
+          : buyer.payoutAmountKrw / buyer.grossSalesKrw,
+      items: buyer.items.map((item) => ({
+        productVariantId: item.productVariantId,
+        productVariantName: item.productVariantName,
+        soldQty: item.soldQty,
+        grossSalesKrw: item.grossSalesKrw,
+        fundTotalKrw: item.fundTotalKrw,
+        payoutAmountKrw: item.payoutAmountKrw,
+      })),
+    }))
+    .sort((left, right) => right.payoutAmountKrw - left.payoutAmountKrw);
+}
+
+function buildBuyerTypeMetrics(report: BuyerSalesResponse): BuyerTypeMetric[] {
+  const metrics = new Map<string, BuyerTypeMetric>();
+
+  for (const buyer of report.buyers) {
+    const current = metrics.get(buyer.buyerType) ?? {
+      buyerType: buyer.buyerType,
+      soldQty: 0,
+      grossSalesKrw: 0,
+      fundTotalKrw: 0,
+      payoutAmountKrw: 0,
+      payoutRate: 0,
+      shareOfPayout: 0,
+    };
+    current.soldQty += buyer.soldQty;
+    current.grossSalesKrw += buyer.grossSalesKrw;
+    current.fundTotalKrw += buyer.fundTotalKrw;
+    current.payoutAmountKrw += buyer.payoutAmountKrw;
+    metrics.set(buyer.buyerType, current);
+  }
+
+  const rows = [...metrics.values()];
+  const totalPayout = rows.reduce((sum, row) => sum + row.payoutAmountKrw, 0);
+
+  return rows
+    .map((row) => ({
+      ...row,
+      payoutRate: row.grossSalesKrw === 0 ? 0 : row.payoutAmountKrw / row.grossSalesKrw,
+      shareOfPayout: totalPayout === 0 ? 0 : row.payoutAmountKrw / totalPayout,
+    }))
+    .sort((left, right) => right.payoutAmountKrw - left.payoutAmountKrw);
+}
+
+function buildTopProductsByPayout(
+  report: BuyerSalesResponse,
+): TopProductByPayout[] {
+  const products = new Map<string, TopProductByPayout>();
+
+  for (const buyer of report.buyers) {
+    for (const item of buyer.items) {
+      const productName = toProductName(item.productVariantName);
+      const current = products.get(productName) ?? {
+        productId: productName,
+        productName,
+        soldQty: 0,
+        grossSalesKrw: 0,
+        fundTotalKrw: 0,
+        payoutAmountKrw: 0,
+      };
+      current.soldQty += item.soldQty;
+      current.grossSalesKrw += item.grossSalesKrw;
+      current.fundTotalKrw += item.fundTotalKrw;
+      current.payoutAmountKrw += item.payoutAmountKrw;
+      products.set(productName, current);
+    }
+  }
+
+  return [...products.values()]
+    .sort((left, right) => right.payoutAmountKrw - left.payoutAmountKrw)
+    .slice(0, 5);
+}
+
+export function buildBuyerMixReport(
+  current: BuyerSalesResponse,
+  previous: BuyerSalesResponse,
+): BuyerMixReport {
+  const currentSummary = toBuyerMixSummary(current);
+  const previousSummary = toBuyerMixSummary(previous);
+
+  return {
+    from: current.from,
+    to: current.to,
+    summary: currentSummary,
+    comparison: {
+      previousFrom: previous.from,
+      previousTo: previous.to,
+      previousSummary,
+      delta: buildBuyerMixDelta(currentSummary, previousSummary),
+    },
+    buyerTypes: buildBuyerTypeMetrics(current),
+    topProductsByPayout: buildTopProductsByPayout(current),
+    buyers: buildBuyerRows(current),
   };
 }

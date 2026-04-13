@@ -1,11 +1,8 @@
 export { AppLayout } from "./AppLayout";
 export { BuyerSalesList } from "./BuyerSalesList";
-export { BuyerMixInsights } from "./BuyerMixInsights";
-export { BuyerMixStats } from "./BuyerMixStats";
-export { BuyerTypeBreakdown } from "./BuyerTypeBreakdown";
 export { DateFilterCard } from "./DateFilterCard";
 export { HomeOverview } from "./HomeOverview";
 export { LoginCard } from "./LoginCard";
 export { ProductSalesList } from "./ProductSalesList";
 export { ReportStats } from "./ReportStats";
-export { TopProductsByPayout } from "./TopProductsByPayout";
+// buyer-mix components removed: BuyerMixInsights, BuyerMixStats, BuyerTypeBreakdown, TopProductsByPayout

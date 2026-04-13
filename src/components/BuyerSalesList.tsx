@@ -38,21 +38,32 @@ function getBuyerTypeIcon(type: string) {
   }
 }
 
-function getItemIcon(itemName: string) {
-  switch (itemName.toLowerCase()) {
-    case "tomato":
+function getItemIcon(productVariantName: string) {
+  const normalizedName = productVariantName.toLowerCase();
+
+  switch (true) {
+    case normalizedName.includes("tomato"):
       return LocalFloristRoundedIcon;
-    case "potato":
+    case normalizedName.includes("potato"):
       return RestaurantRoundedIcon;
-    case "apple":
+    case normalizedName.includes("apple"):
       return SpaRoundedIcon;
-    case "cabbage":
+    case normalizedName.includes("cabbage"):
       return LocalFloristRoundedIcon;
-    case "cucumber":
+    case normalizedName.includes("cucumber"):
       return SpaRoundedIcon;
     default:
       return LocalFloristRoundedIcon;
   }
+}
+
+function getVariantBaseName(productVariantName: string) {
+  const match = productVariantName.match(/^[A-Za-z]+(?: [A-Za-z]+)*/);
+  if (!match) {
+    return productVariantName;
+  }
+
+  return match[0];
 }
 
 export function BuyerSalesList({
@@ -293,11 +304,11 @@ export function BuyerSalesList({
 
                   <Stack spacing={0.2}>
                     {buyer.items.map((item) => {
-                      const ItemIcon = getItemIcon(item.itemName);
+                      const ItemIcon = getItemIcon(item.productVariantName);
 
                       return (
                         <Stack
-                          key={item.id}
+                          key={item.productVariantId}
                           direction="row"
                           alignItems="center"
                           spacing={1.2}
@@ -322,13 +333,14 @@ export function BuyerSalesList({
                             <Typography
                               sx={{ fontWeight: 700, lineHeight: 1.2 }}
                             >
-                              {item.itemName}
+                              {item.productVariantName}
                             </Typography>
                             <Typography
                               variant="body2"
                               color="text.secondary"
                               sx={{ mt: 0.15 }}
                             >
+                              {getVariantBaseName(item.productVariantName)} ·{" "}
                               {formatInteger(item.soldQty)} {t("table.sold")}
                             </Typography>
                           </Box>

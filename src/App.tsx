@@ -78,14 +78,17 @@ export function App() {
     sortedProducts,
     activeRange,
     errorMessage,
+    buyerMixErrorMessage,
     isLoading,
+    buyerMixIsLoading,
+    buyerMixReport,
     setIdentityDraft,
     setSelectedRange,
     handleIdentitySubmit,
     handleIdentityReset,
     applyQuickRange,
     shiftSelectedDate,
-  } = useSalesReport();
+  } = useSalesReport(activePage);
 
   const rangeOptions = getRangeOptions();
   const now = new Date();
@@ -95,13 +98,14 @@ export function App() {
     form.rangeDays === 1
       ? formatDateTimeLabel(activeRange.to)
       : formatDateRangeLabel(activeRange.from, activeRange.to);
-  const buyerMixReport = useMemo(
+  const buyerMixPreviewReport = useMemo(
     () => buildMockBuyerMixReport(activeRange.from, activeRange.to),
     [activeRange.from, activeRange.to],
   );
-  const topProductByPayout = buyerMixReport.topProductsByPayout[0] ?? null;
+  const topProductByPayout =
+    buyerMixPreviewReport.topProductsByPayout[0] ?? null;
   const highestFundImpactType =
-    [...buyerMixReport.buyerTypes].sort(
+    [...buyerMixPreviewReport.buyerTypes].sort(
       (left, right) => right.fundTotalKrw - left.fundTotalKrw,
     )[0] ?? null;
 
@@ -192,7 +196,7 @@ export function App() {
               selectedToDate={activeRange.to.slice(0, 10)}
               selectedDateLabel={selectedDateLabel}
               rangeDays={form.rangeDays}
-              isLoading={isLoading}
+              isLoading={isLoading || buyerMixIsLoading}
               disableForwardShift={disableForwardShift}
               rangeOptions={rangeOptions}
               onShiftDate={(delta) => {
@@ -232,8 +236,8 @@ export function App() {
               {t("home.mockDataNote")}
             </Alert>
             <HomeOverview
-              summary={buyerMixReport.summary}
-              comparison={buyerMixReport.comparison}
+              summary={buyerMixPreviewReport.summary}
+              comparison={buyerMixPreviewReport.comparison}
               topProduct={topProductByPayout}
               highestFundImpactType={highestFundImpactType}
               formatKrw={formatKrw}
@@ -245,15 +249,25 @@ export function App() {
 
         {activePage === "buyerMix" && identity ? (
           <Stack spacing={1} sx={{ mt: 1 }}>
-            <Alert severity="info" sx={{ mt: 0 }}>
-              {t("buyerMix.mockDataNote")}
-            </Alert>
-            <BuyerSalesList
-              buyers={buyerMixReport.buyers}
-              buyerTypeLabel={toBuyerTypeLabel}
-              formatInteger={formatInteger}
-              formatKrw={formatKrw}
-            />
+            {/* Simplified buyerMix page: keep buyer list only */}
+            {buyerMixErrorMessage ? (
+              <Alert severity="error" sx={{ mt: 0 }}>
+                {buyerMixErrorMessage}
+              </Alert>
+            ) : null}
+            {buyerMixIsLoading && !buyerMixReport ? (
+              <Alert severity="info" sx={{ mt: 0 }}>
+                {t("date.loadingReport")}
+              </Alert>
+            ) : null}
+            {buyerMixReport ? (
+              <BuyerSalesList
+                buyers={buyerMixReport.buyers}
+                buyerTypeLabel={toBuyerTypeLabel}
+                formatInteger={formatInteger}
+                formatKrw={formatKrw}
+              />
+            ) : null}
           </Stack>
         ) : null}
       </Box>
