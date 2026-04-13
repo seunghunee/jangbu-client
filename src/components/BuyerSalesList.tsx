@@ -57,15 +57,6 @@ function getItemIcon(productVariantName: string) {
   }
 }
 
-function getVariantBaseName(productVariantName: string) {
-  const match = productVariantName.match(/^[A-Za-z]+(?: [A-Za-z]+)*/);
-  if (!match) {
-    return productVariantName;
-  }
-
-  return match[0];
-}
-
 export function BuyerSalesList({
   buyers,
   buyerTypeLabel,

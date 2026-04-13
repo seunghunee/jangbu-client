@@ -22,6 +22,7 @@ import {
 import {
   AppLayout,
   BuyerSalesList,
+  BuyerTotals,
   DateFilterCard,
   HomeOverview,
   LoginCard,
@@ -261,12 +262,20 @@ export function App() {
               </Alert>
             ) : null}
             {buyerMixReport ? (
-              <BuyerSalesList
-                buyers={buyerMixReport.buyers}
-                buyerTypeLabel={toBuyerTypeLabel}
-                formatInteger={formatInteger}
-                formatKrw={formatKrw}
-              />
+              <>
+                <BuyerTotals
+                  summary={buyerMixReport.summary}
+                  formatKrw={formatKrw}
+                  formatInteger={formatInteger}
+                />
+
+                <BuyerSalesList
+                  buyers={buyerMixReport.buyers}
+                  buyerTypeLabel={toBuyerTypeLabel}
+                  formatInteger={formatInteger}
+                  formatKrw={formatKrw}
+                />
+              </>
             ) : null}
           </Stack>
         ) : null}
