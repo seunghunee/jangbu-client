@@ -119,7 +119,7 @@ export function BuyerSalesList({
               size="small"
               label={buyerTypeLabel(type)}
               color={activeFilter === type ? "primary" : "default"}
-              icon={<BuyerTypeIcon sx={{ fontSize: "1rem" }} />}
+              icon={<BuyerTypeIcon sx={{ fontSize: "1.25rem" }} />}
               onClick={() => {
                 setActiveFilter(type);
                 setExpandedBuyerId(null);
@@ -180,11 +180,18 @@ export function BuyerSalesList({
                     flexShrink: 0,
                   }}
                 >
-                  <BuyerTypeIcon sx={{ fontSize: "1rem" }} />
+                  <BuyerTypeIcon sx={{ fontSize: "1.25rem" }} />
                 </Box>
                 <Stack spacing={0.2} sx={{ minWidth: 0, flex: 1 }}>
                   <Typography sx={{ fontWeight: 700 }}>
                     {buyer.buyerName}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 0.15 }}
+                  >
+                    {formatInteger(buyer.soldQty)} {t("table.sold")}
                   </Typography>
                 </Stack>
 
@@ -194,9 +201,6 @@ export function BuyerSalesList({
                   alignItems="center"
                   sx={{ ml: "auto", flexShrink: 0 }}
                 >
-                  <Typography variant="body2" color="text.secondary">
-                    {formatInteger(buyer.soldQty)} {t("table.sold")}
-                  </Typography>
                   <Typography
                     variant="h6"
                     sx={{ fontWeight: 700, color: "primary.main" }}
@@ -229,7 +233,7 @@ export function BuyerSalesList({
                       mt: 0.7,
                       p: 1.2,
                       borderRadius: 1,
-                      bgcolor: "#f3f4ea",
+                      bgcolor: "background.paper",
                     }}
                   >
                     <Stack spacing={1}>

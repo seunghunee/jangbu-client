@@ -26,21 +26,13 @@ export function ProductSalesList({
   formatInteger,
   formatKrw,
 }: ProductSalesListProps) {
-  const [expandedProductIds, setExpandedProductIds] = useState<Set<string>>(
-    () => new Set(),
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(
+    null,
   );
 
   function toggleExpanded(productId: string | number) {
     const key = String(productId);
-    setExpandedProductIds((current) => {
-      const next = new Set(current);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      return next;
-    });
+    setExpandedProductId((current) => (current === key ? null : key));
   }
 
   return (
@@ -58,7 +50,7 @@ export function ProductSalesList({
         }}
       >
         {products.map((product, index) => {
-          const expanded = expandedProductIds.has(String(product.productId));
+          const expanded = expandedProductId === String(product.productId);
           const showDivider = expanded || index < products.length - 1;
 
           return (
