@@ -133,22 +133,39 @@ export function LazyDatePickerDialog({
             slotProps={{
               day: (ownerState: any) => {
                 try {
-                  const d = ownerState?.day as Dayjs | undefined;
-                  const isStart = !!(
+                  const raw = ownerState?.day;
+                  if (!raw) return {};
+
+                  const d = dayjs(raw).startOf("day");
+                  const end = (draftTo ?? previewEnd) as Dayjs | null;
+
+                  const isStart = !!(draftFrom && d.isSame(draftFrom, "day"));
+                  const isEnd = !!(end && d.isSame(end, "day"));
+                  const isBetween = !!(
                     draftFrom &&
-                    d &&
-                    d.isSame &&
-                    d.isSame(draftFrom, "day")
+                    end &&
+                    d.isAfter(draftFrom, "day") &&
+                    d.isBefore(end, "day")
                   );
-                  return {
-                    sx: isStart
-                      ? {
-                          bgcolor: "primary.light",
-                          color: "primary.contrastText",
-                          borderRadius: "50%",
-                        }
-                      : undefined,
-                  };
+
+                  const sx: any = { borderRadius: 1 };
+
+                  if (isStart) {
+                    sx.bgcolor = "primary.main";
+                    sx.color = "primary.contrastText";
+                  } else if (isEnd) {
+                    sx.bgcolor = "primary.main";
+                    sx.color = "primary.contrastText";
+                  } else if (isBetween) {
+                    sx.bgcolor = "primary.light";
+                    sx.color = "primary.contrastText";
+                  }
+
+                  // Mark in-range days as selected so PickersDay applies
+                  // appropriate selected styles and our sx overrides.
+                  const selected = isStart || isEnd || isBetween;
+
+                  return { sx, selected };
                 } catch {
                   return {};
                 }
