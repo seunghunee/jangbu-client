@@ -4,13 +4,11 @@ import {
   Stack,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
+import { ItemRow, getItemIcon } from "./ItemRow";
 import { useState } from "react";
 import type { ProducerSalesProduct } from "../api";
 import { t } from "../i18n";
@@ -26,13 +24,15 @@ export function ProductSalesList({
   formatInteger,
   formatKrw,
 }: ProductSalesListProps) {
-  const [expandedProductId, setExpandedProductId] = useState<string | null>(
-    null,
-  );
+  const [expandedProductIds, setExpandedProductIds] = useState<string[]>([]);
 
   function toggleExpanded(productId: string | number) {
     const key = String(productId);
-    setExpandedProductId((current) => (current === key ? null : key));
+    setExpandedProductIds((current) =>
+      current.includes(key)
+        ? current.filter((id) => id !== key)
+        : [...current, key],
+    );
   }
 
   return (
@@ -50,7 +50,9 @@ export function ProductSalesList({
         }}
       >
         {products.map((product, index) => {
-          const expanded = expandedProductId === String(product.productId);
+          const expanded = expandedProductIds.includes(
+            String(product.productId),
+          );
           const showDivider = expanded || index < products.length - 1;
 
           return (
@@ -61,7 +63,7 @@ export function ProductSalesList({
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
-                spacing={0.75}
+                spacing={0.8}
                 onClick={() => {
                   toggleExpanded(product.productId);
                 }}
@@ -72,28 +74,49 @@ export function ProductSalesList({
                   }
                 }}
                 sx={{
-                  px: 1.4,
-                  py: 1.68,
+                  px: 1.35,
+                  py: 1.5,
                   borderBottom: showDivider ? "1px solid" : "none",
                   borderColor: "divider",
                   cursor: "pointer",
                 }}
               >
-                <Typography sx={{ fontWeight: 700, flex: 1, minWidth: 0 }}>
-                  {product.productName}
-                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    color: "text.secondary",
+                    flexShrink: 0,
+                  }}
+                >
+                  {(() => {
+                    const Icon = getItemIcon(product.productName);
+                    return <Icon sx={{ fontSize: "1.25rem" }} />;
+                  })()}
+                </Box>
+
+                <Stack spacing={0.2} sx={{ minWidth: 0, flex: 1 }}>
+                  <Typography noWrap sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                    {product.productName}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 0.15 }}
+                  >
+                    {formatInteger(product.soldQty)} {t("product.sold")}
+                  </Typography>
+                </Stack>
+
                 <Stack
                   direction="row"
                   spacing={1.45}
                   alignItems="center"
                   sx={{ ml: "auto", flexShrink: 0 }}
                 >
-                  <Typography variant="body2" color="text.secondary">
-                    {formatInteger(product.soldQty)} {t("product.sold")}
-                  </Typography>
                   <Typography
                     variant="h6"
-                    sx={{ fontWeight: 700, color: "secondary.main" }}
+                    sx={{ fontWeight: 700, color: "primary.main" }}
                   >
                     {formatKrw(product.payoutAmountKrw)}
                   </Typography>
@@ -128,74 +151,19 @@ export function ProductSalesList({
                       },
                     }}
                   >
-                    <TableHead>
-                      <TableRow>
-                        <TableCell
-                          sx={{
-                            py: 0.45,
-                            fontSize: "0.7rem",
-                            fontWeight: 400,
-                            color: "text.secondary",
-                            letterSpacing: 0.2,
-                          }}
-                        >
-                          {t("table.variant")}
-                        </TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{
-                            py: 0.45,
-                            whiteSpace: "nowrap",
-                            fontSize: "0.7rem",
-                            fontWeight: 400,
-                            color: "text.secondary",
-                            letterSpacing: 0.2,
-                          }}
-                        >
-                          {t("table.sold")}
-                        </TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{
-                            py: 0.45,
-                            whiteSpace: "nowrap",
-                            fontSize: "0.7rem",
-                            fontWeight: 400,
-                            color: "text.secondary",
-                            letterSpacing: 0.2,
-                          }}
-                        >
-                          {t("table.payout")}
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
+                    {/* header removed for a cleaner list layout */}
                     <TableBody>
                       {product.items.map((item) => (
-                        <TableRow key={item.productVariantId}>
-                          <TableCell
-                            sx={{
-                              overflowWrap: "anywhere",
-                              wordBreak: "break-word",
-                            }}
-                          >
-                            {item.productVariantName}
-                          </TableCell>
-                          <TableCell
-                            align="right"
-                            sx={{ whiteSpace: "nowrap" }}
-                          >
-                            {formatInteger(item.soldQty)}
-                          </TableCell>
-                          <TableCell
-                            align="right"
-                            sx={{
-                              whiteSpace: "nowrap",
-                              color: "secondary.main",
-                            }}
-                          >
-                            {formatKrw(item.payoutAmountKrw)}
-                          </TableCell>
-                        </TableRow>
+                        <ItemRow
+                          key={item.productVariantId}
+                          id={item.productVariantId}
+                          name={item.productVariantName}
+                          soldQty={item.soldQty}
+                          payoutAmountKrw={item.payoutAmountKrw}
+                          formatInteger={formatInteger}
+                          formatKrw={formatKrw}
+                          asTableRow
+                        />
                       ))}
                     </TableBody>
                   </Table>

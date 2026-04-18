@@ -2,13 +2,11 @@ import { useMemo, useState } from "react";
 import AgricultureRoundedIcon from "@mui/icons-material/AgricultureRounded";
 import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
-import LocalFloristRoundedIcon from "@mui/icons-material/LocalFloristRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import RestaurantRoundedIcon from "@mui/icons-material/RestaurantRounded";
-import SpaRoundedIcon from "@mui/icons-material/SpaRounded";
 import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import WorkRoundedIcon from "@mui/icons-material/WorkRounded";
 import { Box, Chip, Collapse, Stack, Typography } from "@mui/material";
+import { ItemRow } from "./ItemRow";
 import type { BuyerSalesRow } from "../mockBuyerMix";
 import { t } from "../i18n";
 
@@ -35,25 +33,6 @@ function getBuyerTypeIcon(type: string) {
       return WorkRoundedIcon;
     default:
       return StorefrontRoundedIcon;
-  }
-}
-
-function getItemIcon(productVariantName: string) {
-  const normalizedName = productVariantName.toLowerCase();
-
-  switch (true) {
-    case normalizedName.includes("tomato"):
-      return LocalFloristRoundedIcon;
-    case normalizedName.includes("potato"):
-      return RestaurantRoundedIcon;
-    case normalizedName.includes("apple"):
-      return SpaRoundedIcon;
-    case normalizedName.includes("cabbage"):
-      return LocalFloristRoundedIcon;
-    case normalizedName.includes("cucumber"):
-      return SpaRoundedIcon;
-    default:
-      return LocalFloristRoundedIcon;
   }
 }
 
@@ -225,59 +204,17 @@ export function BuyerSalesList({
                   }}
                 >
                   <Stack spacing={0.2} sx={{ mt: 0.7 }}>
-                    {buyer.items.map((item) => {
-                      const ItemIcon = getItemIcon(item.productVariantName);
-
-                      return (
-                        <Stack
-                          key={item.productVariantId}
-                          direction="row"
-                          alignItems="center"
-                          spacing={1.2}
-                          sx={{ py: 0.8 }}
-                        >
-                          <Box
-                            sx={{
-                              width: 42,
-                              height: 42,
-                              borderRadius: "50%",
-                              bgcolor: "#eef0e5",
-                              color: "primary.main",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              flexShrink: 0,
-                            }}
-                          >
-                            <ItemIcon sx={{ fontSize: "1.2rem" }} />
-                          </Box>
-                          <Box sx={{ minWidth: 0, flex: 1 }}>
-                            <Typography
-                              sx={{ fontWeight: 700, lineHeight: 1.2 }}
-                            >
-                              {item.productVariantName}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ mt: 0.15 }}
-                            >
-                              {formatInteger(item.soldQty)} {t("table.sold")}
-                            </Typography>
-                          </Box>
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              color: "primary.main",
-                              fontWeight: 700,
-                              flexShrink: 0,
-                            }}
-                          >
-                            {formatKrw(item.payoutAmountKrw)}
-                          </Typography>
-                        </Stack>
-                      );
-                    })}
+                    {buyer.items.map((item) => (
+                      <ItemRow
+                        key={item.productVariantId}
+                        id={item.productVariantId}
+                        name={item.productVariantName}
+                        soldQty={item.soldQty}
+                        payoutAmountKrw={item.payoutAmountKrw}
+                        formatInteger={formatInteger}
+                        formatKrw={formatKrw}
+                      />
+                    ))}
                   </Stack>
                 </Box>
               </Collapse>
