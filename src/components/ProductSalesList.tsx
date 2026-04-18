@@ -95,7 +95,7 @@ export function ProductSalesList({
                     variant="h6"
                     sx={{ fontWeight: 700, color: "secondary.main" }}
                   >
-                    {formatKrw(product.grossSalesKrw)}
+                    {formatKrw(product.payoutAmountKrw)}
                   </Typography>
                   <ExpandMoreRoundedIcon
                     sx={{
@@ -165,7 +165,7 @@ export function ProductSalesList({
                             letterSpacing: 0.2,
                           }}
                         >
-                          {t("table.grossSales")}
+                          {t("table.payout")}
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -193,7 +193,7 @@ export function ProductSalesList({
                               color: "secondary.main",
                             }}
                           >
-                            {formatKrw(item.grossSalesKrw)}
+                            {formatKrw(item.payoutAmountKrw)}
                           </TableCell>
                         </TableRow>
                       ))}

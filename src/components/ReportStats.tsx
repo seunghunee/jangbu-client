@@ -4,6 +4,7 @@ import { t } from "../i18n";
 type Totals = {
   grossSalesKrw: number;
   soldQty: number;
+  payoutAmountKrw: number;
 };
 
 type ReportStatsProps = {
@@ -62,7 +63,7 @@ export function ReportStats({
                   variant="h6"
                   sx={{ fontWeight: 700, color: "secondary.main" }}
                 >
-                  {formatKrw(totals.grossSalesKrw)}
+                  {formatKrw(totals.payoutAmountKrw)}
                 </Typography>
               </Stack>
             </Box>

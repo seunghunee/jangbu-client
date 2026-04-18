@@ -129,10 +129,10 @@ export function getSalesTotals(report: ProducerSalesResponse) {
   );
 }
 
-export function sortProductsByGrossSales(
+export function sortProductsByPayout(
   products: ProducerSalesProduct[],
 ): ProducerSalesProduct[] {
   return [...products].sort(
-    (left, right) => right.grossSalesKrw - left.grossSalesKrw,
+    (left, right) => right.payoutAmountKrw - left.payoutAmountKrw,
   );
 }

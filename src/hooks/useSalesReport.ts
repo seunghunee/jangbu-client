@@ -8,7 +8,7 @@ import { buildBuyerMixReport, type BuyerMixReport } from "../mockBuyerMix";
 import {
   getDefaultDateRange,
   getSalesTotals,
-  sortProductsByGrossSales,
+  sortProductsByPayout,
   toOffsetDateTime,
 } from "../format";
 import { getUILocale, t } from "../i18n";
@@ -201,9 +201,7 @@ export function useSalesReport(activePage: "home" | "sales" | "buyerMix") {
 
   const activeRange = useMemo(() => getRequestDateRange(form), [form]);
   const totals = report ? getSalesTotals(report) : null;
-  const sortedProducts = report
-    ? sortProductsByGrossSales(report.products)
-    : [];
+  const sortedProducts = report ? sortProductsByPayout(report.products) : [];
 
   function setSelectedDate(value: string) {
     setForm((current) => ({
