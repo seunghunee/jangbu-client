@@ -64,7 +64,8 @@ export function BuyerSalesList({
   formatKrw,
 }: BuyerSalesListProps) {
   const [activeFilter, setActiveFilter] = useState<BuyerFilter>("all");
-  const [expandedBuyerId, setExpandedBuyerId] = useState<string | null>(null);
+  // allow multiple buyers to be expanded at once
+  const [expandedBuyerIds, setExpandedBuyerIds] = useState<string[]>([]);
 
   const availableTypes = useMemo(
     () => [...new Set(buyers.map((buyer) => buyer.buyerType))],
@@ -98,7 +99,7 @@ export function BuyerSalesList({
           color={activeFilter === "all" ? "primary" : "default"}
           onClick={() => {
             setActiveFilter("all");
-            setExpandedBuyerId(null);
+            setExpandedBuyerIds([]);
           }}
         />
         {availableTypes.map((type) => {
@@ -113,7 +114,7 @@ export function BuyerSalesList({
               icon={<BuyerTypeIcon sx={{ fontSize: "1.25rem" }} />}
               onClick={() => {
                 setActiveFilter(type);
-                setExpandedBuyerId(null);
+                setExpandedBuyerIds([]);
               }}
             />
           );
@@ -129,7 +130,7 @@ export function BuyerSalesList({
         }}
       >
         {visibleBuyers.map((buyer, index) => {
-          const expanded = expandedBuyerId === buyer.buyerId;
+          const expanded = expandedBuyerIds.includes(buyer.buyerId);
           const showDivider = expanded || index < visibleBuyers.length - 1;
           const BuyerTypeIcon = getBuyerTypeIcon(buyer.buyerType);
 
@@ -143,15 +144,19 @@ export function BuyerSalesList({
                 alignItems="center"
                 spacing={0.8}
                 onClick={() => {
-                  setExpandedBuyerId((current) =>
-                    current === buyer.buyerId ? null : buyer.buyerId,
+                  setExpandedBuyerIds((current) =>
+                    current.includes(buyer.buyerId)
+                      ? current.filter((id) => id !== buyer.buyerId)
+                      : [...current, buyer.buyerId],
                   );
                 }}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    setExpandedBuyerId((current) =>
-                      current === buyer.buyerId ? null : buyer.buyerId,
+                    setExpandedBuyerIds((current) =>
+                      current.includes(buyer.buyerId)
+                        ? current.filter((id) => id !== buyer.buyerId)
+                        : [...current, buyer.buyerId],
                     );
                   }
                 }}
