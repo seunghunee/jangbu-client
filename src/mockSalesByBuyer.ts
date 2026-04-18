@@ -1,6 +1,6 @@
 import type { BuyerSalesResponse } from "./api";
 
-export type BuyerMixSummary = {
+export type SalesByBuyerSummary = {
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -8,7 +8,7 @@ export type BuyerMixSummary = {
   payoutRate: number;
 };
 
-export type BuyerMixDelta = {
+export type SalesByBuyerDelta = {
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -18,14 +18,14 @@ export type BuyerMixDelta = {
   payoutAmountPct: number;
 };
 
-export type BuyerMixComparison = {
+export type SalesByBuyerComparison = {
   previousFrom: string;
   previousTo: string;
-  previousSummary: BuyerMixSummary;
-  delta: BuyerMixDelta;
+  previousSummary: SalesByBuyerSummary;
+  delta: SalesByBuyerDelta;
 };
 
-export type BuyerTypeMetric = {
+export type SalesByBuyerTypeMetric = {
   buyerType: string;
   soldQty: number;
   grossSalesKrw: number;
@@ -65,17 +65,17 @@ export type BuyerSalesRow = {
   items: BuyerPurchaseItem[];
 };
 
-export type BuyerMixMockReport = {
+export type SalesByBuyerMockReport = {
   from: string;
   to: string;
-  summary: BuyerMixSummary;
-  comparison: BuyerMixComparison;
-  buyerTypes: BuyerTypeMetric[];
+  summary: SalesByBuyerSummary;
+  comparison: SalesByBuyerComparison;
+  buyerTypes: SalesByBuyerTypeMetric[];
   topProductsByPayout: TopProductByPayout[];
   buyers: BuyerSalesRow[];
 };
 
-export type BuyerMixReport = BuyerMixMockReport;
+export type SalesByBuyerReport = SalesByBuyerMockReport;
 
 function toIsoLocalDate(date: Date): string {
   const year = String(date.getFullYear());
@@ -86,7 +86,7 @@ function toIsoLocalDate(date: Date): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-function deriveCurrentSummary(from: string): BuyerMixSummary {
+function deriveCurrentSummary(from: string): SalesByBuyerSummary {
   const monthFactor = new Date(from).getMonth() % 4;
 
   const soldQty = 1260 + monthFactor * 35;
@@ -103,7 +103,9 @@ function deriveCurrentSummary(from: string): BuyerMixSummary {
   };
 }
 
-function derivePreviousSummary(current: BuyerMixSummary): BuyerMixSummary {
+function derivePreviousSummary(
+  current: SalesByBuyerSummary,
+): SalesByBuyerSummary {
   const soldQty = Math.max(0, Math.round(current.soldQty * 0.91));
   const grossSalesKrw = Math.max(0, Math.round(current.grossSalesKrw * 0.89));
   const fundTotalKrw = Math.max(0, Math.round(current.fundTotalKrw * 0.92));
@@ -118,7 +120,9 @@ function derivePreviousSummary(current: BuyerMixSummary): BuyerMixSummary {
   };
 }
 
-function deriveBuyerTypes(summary: BuyerMixSummary): BuyerTypeMetric[] {
+function deriveBuyerTypes(
+  summary: SalesByBuyerSummary,
+): SalesByBuyerTypeMetric[] {
   const slices = [
     { key: "retailer", qtyWeight: 0.52, grossWeight: 0.57, fundWeight: 0.44 },
     {
@@ -165,7 +169,7 @@ function deriveBuyerTypes(summary: BuyerMixSummary): BuyerTypeMetric[] {
   );
 }
 
-function deriveTopProducts(summary: BuyerMixSummary): TopProductByPayout[] {
+function deriveTopProducts(summary: SalesByBuyerSummary): TopProductByPayout[] {
   const rows = [
     { id: "p1", name: "Tomato" },
     { id: "p2", name: "Potato" },
@@ -218,7 +222,7 @@ function toProductName(productVariantName: string): string {
   return normalized || trimmed;
 }
 
-function deriveBuyers(summary: BuyerMixSummary): BuyerSalesRow[] {
+function deriveBuyers(summary: SalesByBuyerSummary): BuyerSalesRow[] {
   const buyerTemplates = [
     { id: "b01", name: "Green Mart", type: "retailer", weight: 0.17 },
     { id: "b02", name: "Hanaro Market", type: "retailer", weight: 0.14 },
@@ -300,10 +304,10 @@ function deriveBuyers(summary: BuyerMixSummary): BuyerSalesRow[] {
   );
 }
 
-export function buildMockBuyerMixReport(
+export function buildMockSalesByBuyerReport(
   from: string,
   to: string,
-): BuyerMixMockReport {
+): SalesByBuyerMockReport {
   const currentSummary = deriveCurrentSummary(from);
   const previousSummary = derivePreviousSummary(currentSummary);
   const fromDate = new Date(from);
@@ -311,7 +315,7 @@ export function buildMockBuyerMixReport(
   const duration = Math.max(0, toDate.getTime() - fromDate.getTime());
   const previousFrom = new Date(fromDate.getTime() - duration);
 
-  const delta: BuyerMixDelta = {
+  const delta: SalesByBuyerDelta = {
     soldQty: currentSummary.soldQty - previousSummary.soldQty,
     grossSalesKrw: currentSummary.grossSalesKrw - previousSummary.grossSalesKrw,
     fundTotalKrw: currentSummary.fundTotalKrw - previousSummary.fundTotalKrw,
@@ -348,7 +352,7 @@ export function buildMockBuyerMixReport(
   };
 }
 
-function sumBuyerSales(report: BuyerSalesResponse): BuyerMixSummary {
+function sumBuyerSales(report: BuyerSalesResponse): SalesByBuyerSummary {
   return report.buyers.reduce(
     (totals, buyer) => {
       totals.soldQty += buyer.soldQty;
@@ -367,7 +371,9 @@ function sumBuyerSales(report: BuyerSalesResponse): BuyerMixSummary {
   );
 }
 
-function toBuyerMixSummary(report: BuyerSalesResponse): BuyerMixSummary {
+function toSalesByBuyerSummary(
+  report: BuyerSalesResponse,
+): SalesByBuyerSummary {
   const summary = sumBuyerSales(report);
   summary.payoutRate =
     summary.grossSalesKrw === 0
@@ -376,10 +382,10 @@ function toBuyerMixSummary(report: BuyerSalesResponse): BuyerMixSummary {
   return summary;
 }
 
-function buildBuyerMixDelta(
-  currentSummary: BuyerMixSummary,
-  previousSummary: BuyerMixSummary,
-): BuyerMixDelta {
+function buildSalesByBuyerDelta(
+  currentSummary: SalesByBuyerSummary,
+  previousSummary: SalesByBuyerSummary,
+): SalesByBuyerDelta {
   return {
     soldQty: currentSummary.soldQty - previousSummary.soldQty,
     grossSalesKrw: currentSummary.grossSalesKrw - previousSummary.grossSalesKrw,
@@ -428,8 +434,10 @@ function buildBuyerRows(report: BuyerSalesResponse): BuyerSalesRow[] {
     .sort((left, right) => right.payoutAmountKrw - left.payoutAmountKrw);
 }
 
-function buildBuyerTypeMetrics(report: BuyerSalesResponse): BuyerTypeMetric[] {
-  const metrics = new Map<string, BuyerTypeMetric>();
+function buildBuyerTypeMetrics(
+  report: BuyerSalesResponse,
+): SalesByBuyerTypeMetric[] {
+  const metrics = new Map<string, SalesByBuyerTypeMetric>();
 
   for (const buyer of report.buyers) {
     const current = metrics.get(buyer.buyerType) ?? {
@@ -454,7 +462,8 @@ function buildBuyerTypeMetrics(report: BuyerSalesResponse): BuyerTypeMetric[] {
   return rows
     .map((row) => ({
       ...row,
-      payoutRate: row.grossSalesKrw === 0 ? 0 : row.payoutAmountKrw / row.grossSalesKrw,
+      payoutRate:
+        row.grossSalesKrw === 0 ? 0 : row.payoutAmountKrw / row.grossSalesKrw,
       shareOfPayout: totalPayout === 0 ? 0 : row.payoutAmountKrw / totalPayout,
     }))
     .sort((left, right) => right.payoutAmountKrw - left.payoutAmountKrw);
@@ -489,12 +498,12 @@ function buildTopProductsByPayout(
     .slice(0, 5);
 }
 
-export function buildBuyerMixReport(
+export function buildSalesByBuyerReport(
   current: BuyerSalesResponse,
   previous: BuyerSalesResponse,
-): BuyerMixReport {
-  const currentSummary = toBuyerMixSummary(current);
-  const previousSummary = toBuyerMixSummary(previous);
+): SalesByBuyerReport {
+  const currentSummary = toSalesByBuyerSummary(current);
+  const previousSummary = toSalesByBuyerSummary(previous);
 
   return {
     from: current.from,
@@ -504,7 +513,7 @@ export function buildBuyerMixReport(
       previousFrom: previous.from,
       previousTo: previous.to,
       previousSummary,
-      delta: buildBuyerMixDelta(currentSummary, previousSummary),
+      delta: buildSalesByBuyerDelta(currentSummary, previousSummary),
     },
     buyerTypes: buildBuyerTypeMetrics(current),
     topProductsByPayout: buildTopProductsByPayout(current),

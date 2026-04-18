@@ -4,7 +4,10 @@ import {
   fetchProducerSales,
   type ProducerSalesResponse,
 } from "../api";
-import { buildBuyerMixReport, type BuyerMixReport } from "../mockBuyerMix";
+import {
+  buildSalesByBuyerReport,
+  type SalesByBuyerReport,
+} from "../mockSalesByBuyer";
 import {
   getDefaultDateRange,
   getSalesTotals,
@@ -176,7 +179,9 @@ export function toDateDisplayLabel(dateValue: string): string {
   }).format(date);
 }
 
-export function useSalesReport(activePage: "home" | "sales" | "buyerMix") {
+export function useSalesReport(
+  activePage: "home" | "salesByProduct" | "salesByBuyer",
+) {
   const [form, setForm] = useState<FormState>(initialFormState);
   const [identity, setIdentity] = useState<IdentityState | null>(() =>
     loadStoredIdentity(),
@@ -189,13 +194,12 @@ export function useSalesReport(activePage: "home" | "sales" | "buyerMix") {
     };
   });
   const [report, setReport] = useState<ProducerSalesResponse | null>(null);
-  const [buyerMixReport, setBuyerMixReport] = useState<BuyerMixReport | null>(
-    null,
-  );
-  const [buyerMixErrorMessage, setBuyerMixErrorMessage] = useState<
+  const [salesByBuyerReport, setSalesByBuyerReport] =
+    useState<SalesByBuyerReport | null>(null);
+  const [salesByBuyerErrorMessage, setSalesByBuyerErrorMessage] = useState<
     string | null
   >(null);
-  const [buyerMixIsLoading, setBuyerMixIsLoading] = useState(false);
+  const [salesByBuyerIsLoading, setSalesByBuyerIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -237,8 +241,8 @@ export function useSalesReport(activePage: "home" | "sales" | "buyerMix") {
     setIdentity(nextIdentity);
     setErrorMessage(null);
     setReport(null);
-    setBuyerMixReport(null);
-    setBuyerMixErrorMessage(null);
+    setSalesByBuyerReport(null);
+    setSalesByBuyerErrorMessage(null);
     window.localStorage.setItem(
       IDENTITY_STORAGE_KEY,
       JSON.stringify(nextIdentity),
@@ -248,9 +252,9 @@ export function useSalesReport(activePage: "home" | "sales" | "buyerMix") {
   function handleIdentityReset() {
     setIdentity(null);
     setReport(null);
-    setBuyerMixReport(null);
+    setSalesByBuyerReport(null);
     setErrorMessage(null);
-    setBuyerMixErrorMessage(null);
+    setSalesByBuyerErrorMessage(null);
     setIdentityDraft({ storeId: "", producerId: "" });
     window.localStorage.removeItem(IDENTITY_STORAGE_KEY);
   }
@@ -322,14 +326,14 @@ export function useSalesReport(activePage: "home" | "sales" | "buyerMix") {
     }
   }, [activeRange.from, activeRange.to, identity]);
 
-  const loadBuyerMixReport = useCallback(async () => {
+  const loadSalesByBuyerReport = useCallback(async () => {
     if (!identity) {
-      setBuyerMixErrorMessage(t("error.loginRequired"));
+      setSalesByBuyerErrorMessage(t("error.loginRequired"));
       return;
     }
 
-    setBuyerMixIsLoading(true);
-    setBuyerMixErrorMessage(null);
+    setSalesByBuyerIsLoading(true);
+    setSalesByBuyerErrorMessage(null);
 
     try {
       const currentReport = await fetchBuyerSales({
@@ -340,44 +344,46 @@ export function useSalesReport(activePage: "home" | "sales" | "buyerMix") {
       });
 
       // pass currentReport for both current and previous to avoid a second fetch
-      setBuyerMixReport(buildBuyerMixReport(currentReport, currentReport));
+      setSalesByBuyerReport(
+        buildSalesByBuyerReport(currentReport, currentReport),
+      );
     } catch (error) {
-      setBuyerMixReport(null);
-      setBuyerMixErrorMessage(
+      setSalesByBuyerReport(null);
+      setSalesByBuyerErrorMessage(
         error instanceof Error ? error.message : "Unknown error",
       );
     } finally {
-      setBuyerMixIsLoading(false);
+      setSalesByBuyerIsLoading(false);
     }
   }, [activeRange.from, activeRange.to, identity]);
 
   useEffect(() => {
-    if (!identity || activePage !== "sales") {
+    if (!identity || activePage !== "salesByProduct") {
       return;
     }
     void loadReport();
   }, [activePage, identity, loadReport]);
 
   useEffect(() => {
-    if (!identity || activePage !== "buyerMix") {
+    if (!identity || activePage !== "salesByBuyer") {
       return;
     }
-    void loadBuyerMixReport();
-  }, [activePage, identity, loadBuyerMixReport]);
+    void loadSalesByBuyerReport();
+  }, [activePage, identity, loadSalesByBuyerReport]);
 
   return {
     form,
     identity,
     identityDraft,
     report,
-    buyerMixReport,
+    salesByBuyerReport,
     totals,
     sortedProducts,
     activeRange,
     errorMessage,
-    buyerMixErrorMessage,
+    salesByBuyerErrorMessage,
     isLoading,
-    buyerMixIsLoading,
+    salesByBuyerIsLoading,
     setIdentityDraft,
     setSelectedDate,
     setSelectedRange,

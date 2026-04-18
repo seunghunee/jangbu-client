@@ -130,7 +130,7 @@ export function TotalsCard({
                     color="text.secondary"
                     sx={{ fontWeight: 700 }}
                   >
-                    {t("buyerMix.fundDeduction")}
+                    {t("pages.sales.byBuyer.fundDeduction")}
                   </Typography>
                   <Typography
                     variant="body2"

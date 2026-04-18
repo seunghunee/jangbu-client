@@ -26,94 +26,13 @@ function detectSystemLanguage(): UILanguage {
 
 let currentLanguage: UILanguage = detectSystemLanguage();
 
-type MessageKey =
-  | "app.home"
-  | "app.salesReport"
-  | "app.buyerMix"
-  | "app.switchAccount"
-  | "app.language"
-  | "app.langEnglish"
-  | "app.langKorean"
-  | "login.title"
-  | "login.subtitle"
-  | "login.storeCode"
-  | "login.storeCodePlaceholder"
-  | "login.accountId"
-  | "login.accountIdPlaceholder"
-  | "login.submit"
-  | "date.queryPeriod"
-  | "date.prevDay"
-  | "date.nextDay"
-  | "date.start"
-  | "date.end"
-  | "date.pickDate"
-  | "date.cancel"
-  | "date.apply"
-  | "date.loadSales"
-  | "date.loadingReport"
-  | "range.today"
-  | "range.oneWeek"
-  | "range.oneMonth"
-  | "range.oneYear"
-  | "stats.total"
-  | "stats.grossSales"
-  | "stats.fundTotal"
-  | "stats.payoutAmount"
-  | "stats.unitsSold"
-  | "report.period"
-  | "report.products"
-  | "report.items"
-  | "report.session"
-  | "report.sessionTemporaryLogin"
-  | "product.itemsHeading"
-  | "product.product"
-  | "product.sold"
-  | "product.variants"
-  | "footer.home"
-  | "footer.sales"
-  | "footer.buyerMix"
-  | "footer.inventory"
-  | "footer.settings"
-  | "buyerMix.changeVsPrevious"
-  | "buyerMix.previousPeriod"
-  | "buyerMix.payoutRate"
-  | "buyerMix.shareOfPayout"
-  | "buyerMix.buyerTypeBreakdown"
-  | "buyerMix.buyerType"
-  | "buyerMix.topProductsByPayout"
-  | "buyerMix.mockDataNote"
-  | "buyerMix.bestPayoutQuality"
-  | "buyerMix.largestFundDrag"
-  | "buyerMix.buyersHeading"
-  | "buyerMix.allTypes"
-  | "buyerMix.purchasedItems"
-  | "buyerMix.fundShort"
-  | "buyerMix.fundDeduction"
-  | "buyerMix.totalNetSales"
-  | "buyerMix.itemizedBreakdown"
-  | "home.mockDataNote"
-  | "home.periodChange"
-  | "home.topProductByPayout"
-  | "home.highestFundImpactType"
-  | "buyerType.retailer"
-  | "buyerType.unregisteredIndividual"
-  | "buyerType.unregisteredInstitution"
-  | "buyerType.producer"
-  | "buyerType.staff"
-  | "table.variant"
-  | "table.item"
-  | "table.sold"
-  | "table.grossSales"
-  | "table.fundTotal"
-  | "table.payout"
-  | "error.loginRequired"
-  | "error.identityRequired";
-
-const messages: Record<UILanguage, Record<MessageKey, string>> = {
+const messages = {
   en: {
     "app.home": "Home overview",
-    "app.salesReport": "Sales report",
-    "app.buyerMix": "Buyer sales",
+    "app.sales.byProduct": "Sales — By Product",
+    "app.sales.byBuyer": "Sales — By Buyer",
+    "pages.sales.byProduct.title": "Sales — By Product",
+    "pages.sales.byBuyer.title": "Sales — By Buyer",
     "app.switchAccount": "Switch account",
     "app.language": "Language",
     "app.langEnglish": "English",
@@ -154,27 +73,28 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "product.sold": "sold",
     "product.variants": "Variants",
     "footer.home": "Home",
-    "footer.sales": "Sales",
-    "footer.buyerMix": "Buyers",
+    "footer.sales.byProduct": "By Product",
+    "footer.sales.byBuyer": "By Buyer",
     "footer.inventory": "Inventory",
     "footer.settings": "Settings",
-    "buyerMix.changeVsPrevious": "vs previous",
-    "buyerMix.previousPeriod": "Previous period",
-    "buyerMix.payoutRate": "Payout rate",
-    "buyerMix.shareOfPayout": "Payout share",
-    "buyerMix.buyerTypeBreakdown": "Buyer type breakdown",
-    "buyerMix.buyerType": "Buyer type",
-    "buyerMix.topProductsByPayout": "Top products by payout",
-    "buyerMix.mockDataNote": "Buyer sales preview data for UX validation",
-    "buyerMix.bestPayoutQuality": "Best payout quality",
-    "buyerMix.largestFundDrag": "Largest fund drag",
-    "buyerMix.buyersHeading": "Buyers",
-    "buyerMix.allTypes": "All types",
-    "buyerMix.purchasedItems": "Purchased items",
-    "buyerMix.fundShort": "Fund",
-    "buyerMix.fundDeduction": "Fund total",
-    "buyerMix.totalNetSales": "Total net sales",
-    "buyerMix.itemizedBreakdown": "Itemized breakdown",
+    "pages.sales.byBuyer.changeVsPrevious": "vs previous",
+    "pages.sales.byBuyer.previousPeriod": "Previous period",
+    "pages.sales.byBuyer.payoutRate": "Payout rate",
+    "pages.sales.byBuyer.shareOfPayout": "Payout share",
+    "pages.sales.byBuyer.buyerTypeBreakdown": "Buyer type breakdown",
+    "pages.sales.byBuyer.buyerType": "Buyer type",
+    "pages.sales.byBuyer.topProductsByPayout": "Top products by payout",
+    "pages.sales.byBuyer.mockDataNote":
+      "Buyer sales preview data for UX validation",
+    "pages.sales.byBuyer.bestPayoutQuality": "Best payout quality",
+    "pages.sales.byBuyer.largestFundDrag": "Largest fund drag",
+    "pages.sales.byBuyer.buyersHeading": "Buyers",
+    "pages.sales.byBuyer.allTypes": "All types",
+    "pages.sales.byBuyer.purchasedItems": "Purchased items",
+    "pages.sales.byBuyer.fundShort": "Fund",
+    "pages.sales.byBuyer.fundDeduction": "Fund total",
+    "pages.sales.byBuyer.totalNetSales": "Total net sales",
+    "pages.sales.byBuyer.itemizedBreakdown": "Itemized breakdown",
     "home.mockDataNote": "Home uses preview data for UX validation",
     "home.periodChange": "Payout change vs previous",
     "home.topProductByPayout": "Top product by payout",
@@ -195,8 +115,10 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
   },
   ko: {
     "app.home": "홈 요약",
-    "app.salesReport": "매출 내역 조회",
-    "app.buyerMix": "구매자 매출",
+    "app.sales.byProduct": "매출 내역 조회",
+    "app.sales.byBuyer": "구매자 매출",
+    "pages.sales.byProduct.title": "상품별 매출",
+    "pages.sales.byBuyer.title": "구매자별 매출",
     "app.switchAccount": "계정 변경",
     "app.language": "언어",
     "app.langEnglish": "영어",
@@ -237,27 +159,27 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "product.sold": "판매",
     "product.variants": "옵션 수",
     "footer.home": "홈",
-    "footer.sales": "매출조회",
-    "footer.buyerMix": "구매자",
+    "footer.sales.byProduct": "상품별",
+    "footer.sales.byBuyer": "구매자별",
     "footer.inventory": "재고관리",
     "footer.settings": "설정",
-    "buyerMix.changeVsPrevious": "전 기간 대비",
-    "buyerMix.previousPeriod": "이전 기간",
-    "buyerMix.payoutRate": "정산 비율",
-    "buyerMix.shareOfPayout": "정산 기여도",
-    "buyerMix.buyerTypeBreakdown": "구매자 유형별",
-    "buyerMix.buyerType": "구매자 유형",
-    "buyerMix.topProductsByPayout": "정산 금액 상위 품목",
-    "buyerMix.mockDataNote": "구매자 매출 화면 검증용 예시 데이터",
-    "buyerMix.bestPayoutQuality": "정산 효율이 높은 유형",
-    "buyerMix.largestFundDrag": "펀드 부담이 큰 유형",
-    "buyerMix.buyersHeading": "구매자 목록",
-    "buyerMix.allTypes": "전체 유형",
-    "buyerMix.purchasedItems": "구매 품목",
-    "buyerMix.fundShort": "펀드",
-    "buyerMix.fundDeduction": "펀드 합계",
-    "buyerMix.totalNetSales": "총 정산 금액",
-    "buyerMix.itemizedBreakdown": "품목별 내역",
+    "pages.sales.byBuyer.changeVsPrevious": "전 기간 대비",
+    "pages.sales.byBuyer.previousPeriod": "이전 기간",
+    "pages.sales.byBuyer.payoutRate": "정산 비율",
+    "pages.sales.byBuyer.shareOfPayout": "정산 기여도",
+    "pages.sales.byBuyer.buyerTypeBreakdown": "구매자 유형별",
+    "pages.sales.byBuyer.buyerType": "구매자 유형",
+    "pages.sales.byBuyer.topProductsByPayout": "정산 금액 상위 품목",
+    "pages.sales.byBuyer.mockDataNote": "구매자 매출 화면 검증용 예시 데이터",
+    "pages.sales.byBuyer.bestPayoutQuality": "정산 효율이 높은 유형",
+    "pages.sales.byBuyer.largestFundDrag": "펀드 부담이 큰 유형",
+    "pages.sales.byBuyer.buyersHeading": "구매자 목록",
+    "pages.sales.byBuyer.allTypes": "전체 유형",
+    "pages.sales.byBuyer.purchasedItems": "구매 품목",
+    "pages.sales.byBuyer.fundShort": "펀드",
+    "pages.sales.byBuyer.fundDeduction": "펀드 합계",
+    "pages.sales.byBuyer.totalNetSales": "총 정산 금액",
+    "pages.sales.byBuyer.itemizedBreakdown": "품목별 내역",
     "home.mockDataNote": "홈 화면은 검증용 예시 데이터를 사용합니다",
     "home.periodChange": "이전 기간 대비 정산 변화",
     "home.topProductByPayout": "정산 금액 상위 품목",
@@ -276,10 +198,12 @@ const messages: Record<UILanguage, Record<MessageKey, string>> = {
     "error.loginRequired": "먼저 로그인해 주세요.",
     "error.identityRequired": "매장 코드와 계정 ID는 필수입니다.",
   },
-};
+} as const;
+
+type MessageKey = keyof (typeof messages)["en"];
 
 export function t(key: MessageKey): string {
-  return messages[currentLanguage][key];
+  return messages[currentLanguage][key as MessageKey] as string;
 }
 
 export function getUILanguage(): UILanguage {

@@ -1,17 +1,17 @@
 import { Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import type {
-  BuyerMixComparison,
-  BuyerMixSummary,
-  BuyerTypeMetric,
+  SalesByBuyerComparison,
+  SalesByBuyerSummary,
+  SalesByBuyerTypeMetric,
   TopProductByPayout,
-} from "../mockBuyerMix";
+} from "../mockSalesByBuyer";
 import { t } from "../i18n";
 
 type HomeOverviewProps = {
-  summary: BuyerMixSummary;
-  comparison: BuyerMixComparison;
+  summary: SalesByBuyerSummary;
+  comparison: SalesByBuyerComparison;
   topProduct: TopProductByPayout | null;
-  highestFundImpactType: BuyerTypeMetric | null;
+  highestFundImpactType: SalesByBuyerTypeMetric | null;
   formatKrw: (value: number) => string;
   formatPercent: (value: number) => string;
   buyerTypeLabel: (type: string) => string;

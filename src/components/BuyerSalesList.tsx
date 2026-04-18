@@ -7,7 +7,7 @@ import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import WorkRoundedIcon from "@mui/icons-material/WorkRounded";
 import { Box, Chip, Collapse, Stack, Typography } from "@mui/material";
 import { ItemRow } from "./ItemRow";
-import type { BuyerSalesRow } from "../mockBuyerMix";
+import type { BuyerSalesRow } from "../mockSalesByBuyer";
 import { t } from "../i18n";
 
 type BuyerSalesListProps = {
@@ -61,7 +61,8 @@ export function BuyerSalesList({
   return (
     <>
       <Typography variant="subtitle1" color="text.secondary" sx={{ px: 0.9 }}>
-        {t("buyerMix.buyersHeading")} ({formatInteger(visibleBuyers.length)})
+        {t("pages.sales.byBuyer.buyersHeading")} (
+        {formatInteger(visibleBuyers.length)})
       </Typography>
 
       <Stack
@@ -74,7 +75,7 @@ export function BuyerSalesList({
         <Chip
           clickable
           size="small"
-          label={t("buyerMix.allTypes")}
+          label={t("pages.sales.byBuyer.allTypes")}
           color={activeFilter === "all" ? "primary" : "default"}
           onClick={() => {
             setActiveFilter("all");

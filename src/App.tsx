@@ -30,9 +30,9 @@ import {
 } from "./components";
 import { getRangeOptions, useSalesReport } from "./hooks";
 import { t } from "./i18n";
-import { buildMockBuyerMixReport } from "./mockBuyerMix";
+import { buildMockSalesByBuyerReport } from "./mockSalesByBuyer";
 
-type ActivePage = "home" | "sales" | "buyerMix";
+type ActivePage = "home" | "salesByProduct" | "salesByBuyer";
 
 type FooterNavItemProps = {
   active: boolean;
@@ -78,10 +78,10 @@ export function App() {
     sortedProducts,
     activeRange,
     errorMessage,
-    buyerMixErrorMessage,
+    salesByBuyerErrorMessage,
     isLoading,
-    buyerMixIsLoading,
-    buyerMixReport,
+    salesByBuyerIsLoading,
+    salesByBuyerReport,
     setIdentityDraft,
     setSelectedRange,
     handleIdentitySubmit,
@@ -98,14 +98,14 @@ export function App() {
     form.rangeDays === 1
       ? formatDateTimeLabel(activeRange.to)
       : formatDateRangeLabel(activeRange.from, activeRange.to);
-  const buyerMixPreviewReport = useMemo(
-    () => buildMockBuyerMixReport(activeRange.from, activeRange.to),
+  const salesByBuyerPreviewReport = useMemo(
+    () => buildMockSalesByBuyerReport(activeRange.from, activeRange.to),
     [activeRange.from, activeRange.to],
   );
   const topProductByPayout =
-    buyerMixPreviewReport.topProductsByPayout[0] ?? null;
+    salesByBuyerPreviewReport.topProductsByPayout[0] ?? null;
   const highestFundImpactType =
-    [...buyerMixPreviewReport.buyerTypes].sort(
+    [...salesByBuyerPreviewReport.buyerTypes].sort(
       (left, right) => right.fundTotalKrw - left.fundTotalKrw,
     )[0] ?? null;
 
@@ -132,9 +132,9 @@ export function App() {
       return;
     }
     document.title =
-      activePage === "sales"
-        ? `Jangbu Client - ${t("app.salesReport")}`
-        : `Jangbu Client - ${t("app.buyerMix")}`;
+      activePage === "salesByProduct"
+        ? `Jangbu Client - ${t("app.sales.byProduct")}`
+        : `Jangbu Client - ${t("app.sales.byBuyer")}`;
   }, [activePage]);
 
   return (
@@ -181,10 +181,10 @@ export function App() {
                   variant="h5"
                   sx={{ fontWeight: 700, textAlign: "center" }}
                 >
-                  {activePage === "sales"
-                    ? t("app.salesReport")
-                    : activePage === "buyerMix"
-                      ? t("app.buyerMix")
+                  {activePage === "salesByProduct"
+                    ? t("app.sales.byProduct")
+                    : activePage === "salesByBuyer"
+                      ? t("app.sales.byBuyer")
                       : t("app.home")}
                 </Typography>
                 <Box sx={{ width: 36, height: 36 }} />
@@ -196,7 +196,7 @@ export function App() {
               selectedToDate={activeRange.to.slice(0, 10)}
               selectedDateLabel={selectedDateLabel}
               rangeDays={form.rangeDays}
-              isLoading={isLoading || buyerMixIsLoading}
+              isLoading={isLoading || salesByBuyerIsLoading}
               disableForwardShift={disableForwardShift}
               rangeOptions={rangeOptions}
               onShiftDate={(delta) => {
@@ -208,13 +208,13 @@ export function App() {
           </Stack>
         )}
 
-        {activePage === "sales" && errorMessage ? (
+        {activePage === "salesByProduct" && errorMessage ? (
           <Alert severity="error" sx={{ mt: 1 }}>
             {errorMessage}
           </Alert>
         ) : null}
 
-        {activePage === "sales" && report && totals ? (
+        {activePage === "salesByProduct" && report && totals ? (
           <Stack spacing={1} sx={{ mt: 1 }}>
             <TotalsCard
               summary={totals}
@@ -236,8 +236,8 @@ export function App() {
               {t("home.mockDataNote")}
             </Alert>
             <HomeOverview
-              summary={buyerMixPreviewReport.summary}
-              comparison={buyerMixPreviewReport.comparison}
+              summary={salesByBuyerPreviewReport.summary}
+              comparison={salesByBuyerPreviewReport.comparison}
               topProduct={topProductByPayout}
               highestFundImpactType={highestFundImpactType}
               formatKrw={formatKrw}
@@ -247,29 +247,31 @@ export function App() {
           </>
         ) : null}
 
-        {activePage === "buyerMix" && identity ? (
+        {activePage === "salesByBuyer" && identity ? (
           <Stack spacing={1} sx={{ mt: 1 }}>
-            {/* Simplified buyerMix page: keep buyer list only */}
-            {buyerMixErrorMessage ? (
+            {/* Simplified sales-by-buyer page: keep buyer list only */}
+            {salesByBuyerErrorMessage ? (
               <Alert severity="error" sx={{ mt: 0 }}>
-                {buyerMixErrorMessage}
+                {salesByBuyerErrorMessage}
               </Alert>
             ) : null}
-            {buyerMixIsLoading && !buyerMixReport ? (
+
+            {salesByBuyerIsLoading && !salesByBuyerReport ? (
               <Alert severity="info" sx={{ mt: 0 }}>
                 {t("date.loadingReport")}
               </Alert>
             ) : null}
-            {buyerMixReport ? (
+
+            {salesByBuyerReport ? (
               <>
                 <TotalsCard
-                  summary={buyerMixReport.summary}
+                  summary={salesByBuyerReport.summary}
                   formatKrw={formatKrw}
                   formatInteger={formatInteger}
                 />
 
                 <BuyerSalesList
-                  buyers={buyerMixReport.buyers}
+                  buyers={salesByBuyerReport.buyers}
                   buyerTypeLabel={toBuyerTypeLabel}
                   formatInteger={formatInteger}
                   formatKrw={formatKrw}
@@ -311,18 +313,18 @@ export function App() {
                 icon={<HomeOutlinedIcon fontSize="small" />}
               />
               <FooterNavItem
-                active={activePage === "sales"}
-                label={t("footer.sales")}
+                active={activePage === "salesByProduct"}
+                label={t("footer.sales.byProduct")}
                 onClick={() => {
-                  setActivePage("sales");
+                  setActivePage("salesByProduct");
                 }}
                 icon={<BarChartRoundedIcon fontSize="small" />}
               />
               <FooterNavItem
-                active={activePage === "buyerMix"}
-                label={t("footer.buyerMix")}
+                active={activePage === "salesByBuyer"}
+                label={t("footer.sales.byBuyer")}
                 onClick={() => {
-                  setActivePage("buyerMix");
+                  setActivePage("salesByBuyer");
                 }}
                 icon={<Inventory2OutlinedIcon fontSize="small" />}
               />
