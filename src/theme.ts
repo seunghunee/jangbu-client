@@ -77,11 +77,21 @@ let theme = createTheme({
   },
   components: {
     MuiCssBaseline: {
-      styleOverrides: {
+      styleOverrides: (theme: any) => ({
         body: {
           minWidth: 320,
         },
-      },
+        // cover several DOM/class arrangements MUI may output for PickersDay
+        ".jb-start-day.Mui-selected, .MuiPickersDay-root.jb-start-day.Mui-selected, .jb-start-day .Mui-selected":
+          {
+            backgroundColor: `${theme.palette.secondary.main} !important`,
+            color: `${theme.palette.secondary.contrastText} !important`,
+          },
+        ".jb-start-day.Mui-selected:hover, .MuiPickersDay-root.jb-start-day.Mui-selected:hover, .jb-start-day .Mui-selected:hover":
+          {
+            backgroundColor: `${theme.palette.secondary.dark} !important`,
+          },
+      }),
     },
     MuiButton: {
       defaultProps: {

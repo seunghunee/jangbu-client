@@ -150,22 +150,45 @@ export function LazyDatePickerDialog({
 
                   const sx: any = { borderRadius: 1 };
 
+                  // Preferred visual: start uses secondary, end/range use primary.
                   if (isStart) {
-                    sx.bgcolor = "primary.main";
-                    sx.color = "primary.contrastText";
+                    sx.bgcolor = "secondary.main";
+                    sx.color = "secondary.contrastText";
+                    sx["&.Mui-selected"] = {
+                      bgcolor: "secondary.main",
+                      color: "secondary.contrastText",
+                    };
+                    sx["&.Mui-selected:hover"] = {
+                      bgcolor: "secondary.dark",
+                    };
                   } else if (isEnd) {
                     sx.bgcolor = "primary.main";
                     sx.color = "primary.contrastText";
+                    sx["&.Mui-selected"] = {
+                      bgcolor: "primary.main",
+                      color: "primary.contrastText",
+                    };
+                    sx["&.Mui-selected:hover"] = {
+                      bgcolor: "primary.dark",
+                    };
                   } else if (isBetween) {
                     sx.bgcolor = "primary.light";
                     sx.color = "primary.contrastText";
+                    sx["&.Mui-selected"] = {
+                      bgcolor: "primary.light",
+                      color: "primary.contrastText",
+                    };
                   }
 
                   // Mark in-range days as selected so PickersDay applies
                   // appropriate selected styles and our sx overrides.
                   const selected = isStart || isEnd || isBetween;
 
-                  return { sx, selected };
+                  return {
+                    sx,
+                    selected,
+                    className: isStart ? "jb-start-day" : undefined,
+                  };
                 } catch {
                   return {};
                 }
@@ -192,8 +215,10 @@ export function LazyDatePickerDialog({
                   px: 1.25,
                   py: 0.5,
                   borderRadius: 2,
-                  bgcolor: draftFrom ? "primary.light" : "action.hover",
-                  color: draftFrom ? "primary.contrastText" : "text.secondary",
+                  bgcolor: draftFrom ? "secondary.light" : "action.hover",
+                  color: draftFrom
+                    ? "secondary.contrastText"
+                    : "text.secondary",
                   minWidth: 70,
                   textAlign: "center",
                 }}
