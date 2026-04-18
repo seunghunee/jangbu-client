@@ -9,19 +9,25 @@ import {
 } from "@mui/material";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import { t } from "../i18n";
-import type { BuyerMixSummary } from "../mockBuyerMix";
 
-type BuyerTotalsProps = {
-  summary: BuyerMixSummary;
+export type Totals = {
+  soldQty: number;
+  grossSalesKrw: number;
+  fundTotalKrw: number;
+  payoutAmountKrw: number;
+};
+
+type TotalsCardProps = {
+  summary: Totals;
   formatKrw: (v: number) => string;
   formatInteger: (v: number) => string;
 };
 
-export function BuyerTotals({
+export function TotalsCard({
   summary,
   formatKrw,
   formatInteger,
-}: BuyerTotalsProps) {
+}: TotalsCardProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (

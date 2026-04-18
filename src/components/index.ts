@@ -1,6 +1,6 @@
 export { AppLayout } from "./AppLayout";
 export { BuyerSalesList } from "./BuyerSalesList";
-export { BuyerTotals } from "./BuyerTotals";
+export { TotalsCard } from "./TotalsCard";
 export { DateFilterCard } from "./DateFilterCard";
 export { HomeOverview } from "./HomeOverview";
 export { LoginCard } from "./LoginCard";

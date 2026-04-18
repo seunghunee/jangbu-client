@@ -22,12 +22,11 @@ import {
 import {
   AppLayout,
   BuyerSalesList,
-  BuyerTotals,
+  TotalsCard,
   DateFilterCard,
   HomeOverview,
   LoginCard,
   ProductSalesList,
-  ReportStats,
 } from "./components";
 import { getRangeOptions, useSalesReport } from "./hooks";
 import { t } from "./i18n";
@@ -217,8 +216,8 @@ export function App() {
 
         {activePage === "sales" && report && totals ? (
           <Stack spacing={1} sx={{ mt: 1 }}>
-            <ReportStats
-              totals={totals}
+            <TotalsCard
+              summary={totals}
               formatKrw={formatKrw}
               formatInteger={formatInteger}
             />
@@ -263,7 +262,7 @@ export function App() {
             ) : null}
             {buyerMixReport ? (
               <>
-                <BuyerTotals
+                <TotalsCard
                   summary={buyerMixReport.summary}
                   formatKrw={formatKrw}
                   formatInteger={formatInteger}
