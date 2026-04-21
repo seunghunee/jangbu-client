@@ -131,7 +131,15 @@ export function ItemRow({
       </Box>
 
       <Box sx={{ minWidth: 0, flex: 1 }}>
-        <Typography sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+        <Typography
+          noWrap
+          sx={{
+            fontWeight: 700,
+            lineHeight: 1.2,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
           {name}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.15 }}>

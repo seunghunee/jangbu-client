@@ -96,7 +96,15 @@ export function ProductSalesList({
                 </Box>
 
                 <Stack spacing={0.2} sx={{ minWidth: 0, flex: 1 }}>
-                  <Typography noWrap sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: 700,
+                      lineHeight: 1.2,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
                     {product.productName}
                   </Typography>
                   <Typography
@@ -145,7 +153,7 @@ export function ProductSalesList({
                     size="small"
                     sx={{
                       width: "100%",
-                      tableLayout: "fixed",
+                      tableLayout: "auto",
                       "& .MuiTableCell-root": {
                         borderBottom: "none",
                       },
