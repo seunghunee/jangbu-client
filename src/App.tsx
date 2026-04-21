@@ -6,12 +6,13 @@ import {
   IconButton,
   Stack,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
+import PeopleRoundedIcon from "@mui/icons-material/PeopleRounded";
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import {
   formatPercent,
   formatDateRangeLabel,
@@ -43,27 +44,29 @@ type FooterNavItemProps = {
 
 function FooterNavItem({ active, label, onClick, icon }: FooterNavItemProps) {
   return (
-    <ButtonBase
-      onClick={onClick}
-      sx={{
-        flex: 1,
-        py: 0.25,
-        px: 0.4,
-        borderRadius: 1,
-        color: active ? "primary.main" : "text.secondary",
-      }}
-      aria-label={label}
-    >
-      <Stack spacing={0.2} alignItems="center" sx={{ width: "100%" }}>
-        {icon}
-        <Typography
-          variant="caption"
-          sx={{ fontSize: "0.7rem", fontWeight: active ? 700 : 500 }}
-        >
-          {label}
-        </Typography>
-      </Stack>
-    </ButtonBase>
+    <Tooltip title={label} enterDelay={300}>
+      <ButtonBase
+        onClick={onClick}
+        sx={{
+          flex: 1,
+          py: 0.25,
+          px: 0.4,
+          borderRadius: 1,
+          color: active ? "primary.main" : "text.secondary",
+        }}
+        aria-label={label}
+      >
+        <Stack spacing={0.2} alignItems="center" sx={{ width: "100%" }}>
+          {icon}
+          <Typography
+            variant="caption"
+            sx={{ fontSize: "0.7rem", fontWeight: active ? 700 : 500 }}
+          >
+            {label}
+          </Typography>
+        </Stack>
+      </ButtonBase>
+    </Tooltip>
   );
 }
 
@@ -310,7 +313,7 @@ export function App() {
                 onClick={() => {
                   setActivePage("home");
                 }}
-                icon={<HomeOutlinedIcon fontSize="small" />}
+                icon={<HomeRoundedIcon fontSize="small" />}
               />
               <FooterNavItem
                 active={activePage === "salesByProduct"}
@@ -318,7 +321,7 @@ export function App() {
                 onClick={() => {
                   setActivePage("salesByProduct");
                 }}
-                icon={<BarChartRoundedIcon fontSize="small" />}
+                icon={<Inventory2RoundedIcon fontSize="small" />}
               />
               <FooterNavItem
                 active={activePage === "salesByBuyer"}
@@ -326,13 +329,13 @@ export function App() {
                 onClick={() => {
                   setActivePage("salesByBuyer");
                 }}
-                icon={<Inventory2OutlinedIcon fontSize="small" />}
+                icon={<PeopleRoundedIcon fontSize="small" />}
               />
               <FooterNavItem
                 active={false}
                 label={t("footer.settings")}
                 onClick={() => undefined}
-                icon={<SettingsOutlinedIcon fontSize="small" />}
+                icon={<SettingsRoundedIcon fontSize="small" />}
               />
             </Stack>
           </Box>
