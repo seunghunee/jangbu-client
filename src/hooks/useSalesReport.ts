@@ -249,16 +249,6 @@ export function useSalesReport(
     );
   }
 
-  function handleIdentityReset() {
-    setIdentity(null);
-    setReport(null);
-    setSalesByBuyerReport(null);
-    setErrorMessage(null);
-    setSalesByBuyerErrorMessage(null);
-    setIdentityDraft({ storeId: "", producerId: "" });
-    window.localStorage.removeItem(IDENTITY_STORAGE_KEY);
-  }
-
   function applyQuickRange(days: number) {
     const today = getTodayDateValue();
     const rangePreset: FormState["rangePreset"] =
@@ -388,7 +378,6 @@ export function useSalesReport(
     setSelectedDate,
     setSelectedRange,
     handleIdentitySubmit,
-    handleIdentityReset,
     applyQuickRange,
     shiftSelectedDate,
   };

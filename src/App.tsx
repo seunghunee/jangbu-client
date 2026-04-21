@@ -3,12 +3,10 @@ import {
   Alert,
   Box,
   ButtonBase,
-  IconButton,
   Stack,
   Typography,
   Tooltip,
 } from "@mui/material";
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
 import PeopleRoundedIcon from "@mui/icons-material/PeopleRounded";
@@ -88,7 +86,7 @@ export function App() {
     setIdentityDraft,
     setSelectedRange,
     handleIdentitySubmit,
-    handleIdentityReset,
+
     applyQuickRange,
     shiftSelectedDate,
   } = useSalesReport(activePage);
@@ -172,14 +170,7 @@ export function App() {
                   alignItems: "center",
                 }}
               >
-                <IconButton
-                  size="small"
-                  onClick={handleIdentityReset}
-                  aria-label={t("app.switchAccount")}
-                  sx={{ width: 36, height: 36 }}
-                >
-                  <ArrowBackRoundedIcon />
-                </IconButton>
+                <Box sx={{ width: 36, height: 36 }} />
                 <Typography
                   variant="h5"
                   sx={{ fontWeight: 700, textAlign: "center" }}
