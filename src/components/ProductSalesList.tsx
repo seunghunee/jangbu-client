@@ -90,7 +90,7 @@ export function ProductSalesList({
                   }}
                 >
                   {(() => {
-                    const Icon = getItemIcon(product.productName);
+                    const Icon = getItemIcon(product.iconKey);
                     return <Icon sx={{ fontSize: "1.25rem" }} />;
                   })()}
                 </Box>
@@ -166,6 +166,7 @@ export function ProductSalesList({
                           key={item.productVariantId}
                           id={item.productVariantId}
                           name={item.productVariantName}
+                          iconKey={item.iconKey}
                           soldQty={item.soldQty}
                           payoutAmountKrw={item.payoutAmountKrw}
                           formatInteger={formatInteger}

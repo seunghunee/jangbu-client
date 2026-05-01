@@ -1,32 +1,13 @@
 import { Box, Stack, TableCell, TableRow, Typography } from "@mui/material";
-import LocalFloristRoundedIcon from "@mui/icons-material/LocalFloristRounded";
-import RestaurantRoundedIcon from "@mui/icons-material/RestaurantRounded";
-import SpaRoundedIcon from "@mui/icons-material/SpaRounded";
 import type { ReactElement } from "react";
 import { t } from "../i18n";
-
-export function getItemIcon(productVariantName: string) {
-  const normalizedName = productVariantName.toLowerCase();
-
-  switch (true) {
-    case normalizedName.includes("tomato"):
-      return LocalFloristRoundedIcon;
-    case normalizedName.includes("potato"):
-      return RestaurantRoundedIcon;
-    case normalizedName.includes("apple"):
-      return SpaRoundedIcon;
-    case normalizedName.includes("cabbage"):
-      return LocalFloristRoundedIcon;
-    case normalizedName.includes("cucumber"):
-      return SpaRoundedIcon;
-    default:
-      return LocalFloristRoundedIcon;
-  }
-}
+import { getItemIcon } from "./itemIcons";
+export { getItemIcon };
 
 type ItemRowProps = {
   id?: string | number;
   name: string;
+  iconKey?: string;
   soldQty: number;
   payoutAmountKrw: number;
   formatInteger: (v: number) => string;
@@ -37,13 +18,14 @@ type ItemRowProps = {
 export function ItemRow({
   id,
   name,
+  iconKey,
   soldQty,
   payoutAmountKrw,
   formatInteger,
   formatKrw,
   asTableRow = false,
 }: ItemRowProps): ReactElement {
-  const Icon = getItemIcon(name);
+  const Icon = getItemIcon(iconKey);
 
   if (asTableRow) {
     return (
