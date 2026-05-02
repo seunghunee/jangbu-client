@@ -210,7 +210,7 @@ export function BuyerSalesList({
                         key={item.productVariantId}
                         id={item.productVariantId}
                         name={item.productVariantName}
-                        iconUrl={item.iconUrl}
+                        imageUrl={item.imageUrl}
                         soldQty={item.soldQty}
                         payoutAmountKrw={item.payoutAmountKrw}
                         formatInteger={formatInteger}

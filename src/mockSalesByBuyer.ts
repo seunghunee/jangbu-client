@@ -38,7 +38,7 @@ export type SalesByBuyerTypeMetric = {
 export type TopProductByPayout = {
   productId: string;
   productName: string;
-  iconUrl?: string;
+  imageUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -48,7 +48,7 @@ export type TopProductByPayout = {
 export type BuyerPurchaseItem = {
   productVariantId: string;
   productVariantName: string;
-  iconUrl?: string;
+  imageUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -191,6 +191,7 @@ function deriveTopProducts(summary: SalesByBuyerSummary): TopProductByPayout[] {
     return {
       productId: row.id,
       productName: row.name,
+      imageUrl: toProductImageUrl(row.name),
       soldQty,
       grossSalesKrw,
       fundTotalKrw,
@@ -222,6 +223,38 @@ function toProductName(productVariantName: string): string {
     .replace(/\s+\d+(?:\.\d+)?(?:kg|g|ml|l|L|호)?$/i, "")
     .trim();
   return normalized || trimmed;
+}
+
+function toProductImageUrl(productName: string): string {
+  const palette = [
+    "#5f8f6b",
+    "#b7794b",
+    "#7b8fb8",
+    "#8b6fbf",
+    "#c06a6a",
+  ];
+  const hash = [...productName].reduce(
+    (sum, char) => sum + char.charCodeAt(0),
+    0,
+  );
+  const background = palette[hash % palette.length];
+  const label = productName.trim().slice(0, 1).toUpperCase();
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="18" fill="${background}" />
+      <text
+        x="32"
+        y="38"
+        text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="28"
+        font-weight="700"
+        fill="#fff"
+      >${label}</text>
+    </svg>
+  `.trim();
+
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
 function deriveBuyers(summary: SalesByBuyerSummary): BuyerSalesRow[] {
@@ -281,6 +314,7 @@ function deriveBuyers(summary: SalesByBuyerSummary): BuyerSalesRow[] {
         return {
           productVariantId: `${buyer.id}-v${itemIndex + 1}`,
           productVariantName: `${product.name} ${itemIndex + 1}호`,
+          imageUrl: toProductImageUrl(product.name),
           soldQty: qty,
           grossSalesKrw: gross,
           fundTotalKrw: fund,
@@ -427,6 +461,7 @@ function buildBuyerRows(report: BuyerSalesResponse): BuyerSalesRow[] {
       items: buyer.items.map((item) => ({
         productVariantId: item.productVariantId,
         productVariantName: item.productVariantName,
+        imageUrl: item.imageUrl,
         soldQty: item.soldQty,
         grossSalesKrw: item.grossSalesKrw,
         fundTotalKrw: item.fundTotalKrw,

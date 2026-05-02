@@ -75,8 +75,8 @@ export function ProductSalesList({
                   }
                 }}
                 sx={{
-                  px: 1.35,
-                  py: 1.5,
+                  px: 1.0,
+                  py: 1.1,
                   borderBottom: showDivider ? "1px solid" : "none",
                   borderColor: "divider",
                   cursor: "pointer",
@@ -84,27 +84,34 @@ export function ProductSalesList({
               >
                 <Box
                   sx={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    bgcolor: "#eef0e5",
                     display: "flex",
                     alignItems: "center",
                     color: "text.secondary",
+                    justifyContent: "center",
                     flexShrink: 0,
+                    overflow: "hidden",
                   }}
                 >
-                  {product.iconUrl ? (
+                  {product.imageUrl ? (
                     <Box
                       component="img"
-                      src={product.iconUrl}
+                      src={product.imageUrl}
                       alt=""
                       aria-hidden="true"
                       sx={{
-                        width: 24,
-                        height: 24,
-                        objectFit: "contain",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transform: "scale(1.08)",
                         display: "block",
                       }}
                     />
                   ) : (
-                    <Inventory2RoundedIcon sx={{ fontSize: "1.25rem" }} />
+                    <Inventory2RoundedIcon sx={{ fontSize: "1.65rem" }} />
                   )}
                 </Box>
 
@@ -155,8 +162,8 @@ export function ProductSalesList({
               <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <TableContainer
                   sx={{
-                    px: 1.4,
-                    pb: 1,
+                    px: 1.0,
+                    pb: 0.8,
                     borderBottom:
                       index < products.length - 1 ? "1px solid" : "none",
                     borderColor: "divider",
@@ -179,7 +186,7 @@ export function ProductSalesList({
                           key={item.productVariantId}
                           id={item.productVariantId}
                           name={item.productVariantName}
-                          iconUrl={item.iconUrl}
+                          imageUrl={item.imageUrl}
                           soldQty={item.soldQty}
                           payoutAmountKrw={item.payoutAmountKrw}
                           formatInteger={formatInteger}

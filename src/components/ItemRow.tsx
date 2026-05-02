@@ -6,7 +6,7 @@ import { t } from "../i18n";
 type ItemRowProps = {
   id?: string | number;
   name: string;
-  iconUrl?: string;
+  imageUrl?: string;
   soldQty: number;
   payoutAmountKrw: number;
   formatInteger: (v: number) => string;
@@ -17,29 +17,29 @@ type ItemRowProps = {
 export function ItemRow({
   id,
   name,
-  iconUrl,
+  imageUrl,
   soldQty,
   payoutAmountKrw,
   formatInteger,
   formatKrw,
   asTableRow = false,
 }: ItemRowProps): ReactElement {
-  const hasIconUrl = Boolean(iconUrl);
+  const hasImageUrl = Boolean(imageUrl);
 
   if (asTableRow) {
     return (
       <TableRow
         key={id}
         sx={{
-          "& .MuiTableCell-root": { borderBottom: "none", py: 0.8, px: 0 },
+          "& .MuiTableCell-root": { borderBottom: "none", py: 0.55, px: 0 },
         }}
       >
         <TableCell sx={{ px: 0 }}>
-          <Stack direction="row" spacing={1.2} alignItems="center">
+          <Stack direction="row" spacing={1.0} alignItems="center">
             <Box
               sx={{
-                width: 42,
-                height: 42,
+                width: 50,
+                height: 50,
                 borderRadius: "50%",
                 bgcolor: "#eef0e5",
                 display: "flex",
@@ -49,21 +49,22 @@ export function ItemRow({
                 overflow: "hidden",
               }}
             >
-              {hasIconUrl ? (
+              {hasImageUrl ? (
                 <Box
                   component="img"
-                  src={iconUrl}
+                  src={imageUrl}
                   alt=""
                   aria-hidden="true"
                   sx={{
-                    width: 24,
-                    height: 24,
-                    objectFit: "contain",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    transform: "scale(1.08)",
                     display: "block",
                   }}
                 />
               ) : (
-                <Inventory2RoundedIcon sx={{ fontSize: "1.25rem" }} />
+                <Inventory2RoundedIcon sx={{ fontSize: "1.65rem" }} />
               )}
             </Box>
 
@@ -107,13 +108,13 @@ export function ItemRow({
       key={id}
       direction="row"
       alignItems="center"
-      spacing={1.2}
-      sx={{ py: 0.8 }}
+      spacing={1.0}
+      sx={{ py: 0.55 }}
     >
       <Box
         sx={{
-          width: 42,
-          height: 42,
+          width: 50,
+          height: 50,
           borderRadius: "50%",
           bgcolor: "#eef0e5",
           display: "flex",
@@ -123,21 +124,22 @@ export function ItemRow({
           overflow: "hidden",
         }}
       >
-        {hasIconUrl ? (
+        {hasImageUrl ? (
           <Box
             component="img"
-            src={iconUrl}
+            src={imageUrl}
             alt=""
             aria-hidden="true"
             sx={{
-              width: 24,
-              height: 24,
-              objectFit: "contain",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transform: "scale(1.08)",
               display: "block",
             }}
           />
         ) : (
-          <Inventory2RoundedIcon sx={{ fontSize: "1.25rem" }} />
+          <Inventory2RoundedIcon sx={{ fontSize: "1.65rem" }} />
         )}
       </Box>
 

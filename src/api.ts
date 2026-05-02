@@ -1,7 +1,7 @@
 export type ProducerSalesItem = {
   productVariantId: string;
   productVariantName: string;
-  iconUrl?: string;
+  imageUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -11,7 +11,7 @@ export type ProducerSalesItem = {
 export type ProducerSalesProduct = {
   productId: string;
   productName: string;
-  iconUrl?: string;
+  imageUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -30,7 +30,7 @@ export type ProducerSalesResponse = {
 export type BuyerSalesItem = {
   productVariantId: string;
   productVariantName: string;
-  iconUrl?: string;
+  imageUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -67,6 +67,95 @@ type APIErrorPayload = {
   error?: string;
 };
 
+type RawProducerSalesItem = {
+  productVariantId: string;
+  productVariantName: string;
+  iconUrl?: string;
+  soldQty: number;
+  grossSalesKrw: number;
+  fundTotalKrw: number;
+  payoutAmountKrw: number;
+};
+
+type RawProducerSalesProduct = {
+  productId: string;
+  productName: string;
+  iconUrl?: string;
+  soldQty: number;
+  grossSalesKrw: number;
+  fundTotalKrw: number;
+  payoutAmountKrw: number;
+  items: RawProducerSalesItem[];
+};
+
+type RawProducerSalesResponse = {
+  storeId: string;
+  producerId: string;
+  from: string;
+  to: string;
+  products: RawProducerSalesProduct[];
+};
+
+type RawBuyerSalesItem = {
+  productVariantId: string;
+  productVariantName: string;
+  iconUrl?: string;
+  soldQty: number;
+  grossSalesKrw: number;
+  fundTotalKrw: number;
+  payoutAmountKrw: number;
+};
+
+type RawBuyerSalesBuyer = {
+  buyerId: string;
+  buyerName: string;
+  buyerType: string;
+  soldQty: number;
+  grossSalesKrw: number;
+  fundTotalKrw: number;
+  payoutAmountKrw: number;
+  items: RawBuyerSalesItem[];
+};
+
+type RawBuyerSalesResponse = {
+  storeId: string;
+  producerId: string;
+  from: string;
+  to: string;
+  buyers: RawBuyerSalesBuyer[];
+};
+
+function normalizeProducerSalesResponse(
+  response: RawProducerSalesResponse,
+): ProducerSalesResponse {
+  return {
+    ...response,
+    products: response.products.map((product) => ({
+      ...product,
+      imageUrl: product.iconUrl,
+      items: product.items.map((item) => ({
+        ...item,
+        imageUrl: item.iconUrl,
+      })),
+    })),
+  };
+}
+
+function normalizeBuyerSalesResponse(
+  response: RawBuyerSalesResponse,
+): BuyerSalesResponse {
+  return {
+    ...response,
+    buyers: response.buyers.map((buyer) => ({
+      ...buyer,
+      items: buyer.items.map((item) => ({
+        ...item,
+        imageUrl: item.iconUrl,
+      })),
+    })),
+  };
+}
+
 export const API_URL_PREFIX = "/api";
 
 export async function fetchProducerSales(
@@ -76,6 +165,7 @@ export async function fetchProducerSales(
     `${API_URL_PREFIX}/stores/${request.storeId}/producers/${request.producerId}/sales`,
     window.location.origin,
   );
+  url.searchParams.set("group_by", "product");
   url.searchParams.set("from", request.from);
   url.searchParams.set("to", request.to);
 
@@ -98,7 +188,8 @@ export async function fetchProducerSales(
     throw new Error(message);
   }
 
-  return (await response.json()) as ProducerSalesResponse;
+  const payload = (await response.json()) as RawProducerSalesResponse;
+  return normalizeProducerSalesResponse(payload);
 }
 
 export type BuyerSalesRequest = ProducerSalesRequest;
@@ -133,5 +224,6 @@ export async function fetchBuyerSales(
     throw new Error(message);
   }
 
-  return (await response.json()) as BuyerSalesResponse;
+  const payload = (await response.json()) as RawBuyerSalesResponse;
+  return normalizeBuyerSalesResponse(payload);
 }
