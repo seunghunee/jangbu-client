@@ -1,7 +1,7 @@
 export type ProducerSalesItem = {
   productVariantId: string;
   productVariantName: string;
-  iconKey?: string;
+  iconUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -11,7 +11,7 @@ export type ProducerSalesItem = {
 export type ProducerSalesProduct = {
   productId: string;
   productName: string;
-  iconKey?: string;
+  iconUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -30,7 +30,7 @@ export type ProducerSalesResponse = {
 export type BuyerSalesItem = {
   productVariantId: string;
   productVariantName: string;
-  iconKey?: string;
+  iconUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;

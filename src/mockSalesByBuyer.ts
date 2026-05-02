@@ -38,7 +38,7 @@ export type SalesByBuyerTypeMetric = {
 export type TopProductByPayout = {
   productId: string;
   productName: string;
-  iconKey?: string;
+  iconUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;
@@ -48,7 +48,7 @@ export type TopProductByPayout = {
 export type BuyerPurchaseItem = {
   productVariantId: string;
   productVariantName: string;
-  iconKey?: string;
+  iconUrl?: string;
   soldQty: number;
   grossSalesKrw: number;
   fundTotalKrw: number;

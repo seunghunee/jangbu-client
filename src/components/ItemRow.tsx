@@ -1,13 +1,12 @@
+import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
 import { Box, Stack, TableCell, TableRow, Typography } from "@mui/material";
 import type { ReactElement } from "react";
 import { t } from "../i18n";
-import { getItemIcon } from "./itemIcons";
-export { getItemIcon };
 
 type ItemRowProps = {
   id?: string | number;
   name: string;
-  iconKey?: string;
+  iconUrl?: string;
   soldQty: number;
   payoutAmountKrw: number;
   formatInteger: (v: number) => string;
@@ -18,14 +17,14 @@ type ItemRowProps = {
 export function ItemRow({
   id,
   name,
-  iconKey,
+  iconUrl,
   soldQty,
   payoutAmountKrw,
   formatInteger,
   formatKrw,
   asTableRow = false,
 }: ItemRowProps): ReactElement {
-  const Icon = getItemIcon(iconKey);
+  const hasIconUrl = Boolean(iconUrl);
 
   if (asTableRow) {
     return (
@@ -43,14 +42,29 @@ export function ItemRow({
                 height: 42,
                 borderRadius: "50%",
                 bgcolor: "#eef0e5",
-                color: "primary.main",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 flexShrink: 0,
+                overflow: "hidden",
               }}
             >
-              <Icon sx={{ fontSize: "1.2rem" }} />
+              {hasIconUrl ? (
+                <Box
+                  component="img"
+                  src={iconUrl}
+                  alt=""
+                  aria-hidden="true"
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
+              ) : (
+                <Inventory2RoundedIcon sx={{ fontSize: "1.25rem" }} />
+              )}
             </Box>
 
             <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -102,14 +116,29 @@ export function ItemRow({
           height: 42,
           borderRadius: "50%",
           bgcolor: "#eef0e5",
-          color: "primary.main",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexShrink: 0,
+          overflow: "hidden",
         }}
       >
-        <Icon sx={{ fontSize: "1.2rem" }} />
+        {hasIconUrl ? (
+          <Box
+            component="img"
+            src={iconUrl}
+            alt=""
+            aria-hidden="true"
+            sx={{
+              width: 24,
+              height: 24,
+              objectFit: "contain",
+              display: "block",
+            }}
+          />
+        ) : (
+          <Inventory2RoundedIcon sx={{ fontSize: "1.25rem" }} />
+        )}
       </Box>
 
       <Box sx={{ minWidth: 0, flex: 1 }}>

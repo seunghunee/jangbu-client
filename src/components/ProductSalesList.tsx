@@ -8,7 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
-import { ItemRow, getItemIcon } from "./ItemRow";
+import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
+import { ItemRow } from "./ItemRow";
 import { useState } from "react";
 import type { ProducerSalesProduct } from "../api";
 import { t } from "../i18n";
@@ -89,10 +90,22 @@ export function ProductSalesList({
                     flexShrink: 0,
                   }}
                 >
-                  {(() => {
-                    const Icon = getItemIcon(product.iconKey);
-                    return <Icon sx={{ fontSize: "1.25rem" }} />;
-                  })()}
+                  {product.iconUrl ? (
+                    <Box
+                      component="img"
+                      src={product.iconUrl}
+                      alt=""
+                      aria-hidden="true"
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        objectFit: "contain",
+                        display: "block",
+                      }}
+                    />
+                  ) : (
+                    <Inventory2RoundedIcon sx={{ fontSize: "1.25rem" }} />
+                  )}
                 </Box>
 
                 <Stack spacing={0.2} sx={{ minWidth: 0, flex: 1 }}>
@@ -166,7 +179,7 @@ export function ProductSalesList({
                           key={item.productVariantId}
                           id={item.productVariantId}
                           name={item.productVariantName}
-                          iconKey={item.iconKey}
+                          iconUrl={item.iconUrl}
                           soldQty={item.soldQty}
                           payoutAmountKrw={item.payoutAmountKrw}
                           formatInteger={formatInteger}
